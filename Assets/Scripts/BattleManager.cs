@@ -5,17 +5,17 @@ using UnityEngine;
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance;
-    public GameObject battleInterface;
 
     public List<Enemy> enemies;
     public List<Hero> heroes;
     private Hero _currentHero;
-    private bool _isActiveTurn = false;
+    private bool _isActiveTurn = true;
     public bool isActiveTurn
     {
         get { return _isActiveTurn; }
         set { _isActiveTurn = value; }
     }
+    private bool _isFightActive = false;
 
 
     private void Awake()
@@ -29,6 +29,13 @@ public class BattleManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        Debug.Log(enemies.Count);
+    }
+
+    private void Start()
+    {
+        _isFightActive = true;
+        _isActiveTurn = false;
     }
 
     public void ChoseAttack(Enemy enemy)
@@ -41,24 +48,24 @@ public class BattleManager : MonoBehaviour
         _currentHero.Defend();
     }
 
+    // When a turn is claimed by a character, pause everyone else's turn meter.
     public void TakeActiveTurn(Hero hero)
     {
         _currentHero = hero;
         _isActiveTurn = true;
-        // When a turn is claimed by a character, pause everyone else's turn meter.
-        battleInterface.gameObject.SetActive(true);
-        // Give control to player, display UI with link to hero
+        BattleUIHandler.Instance.ToggleActionMenu(true);
     }
 
     public void TakeActiveTurn(Enemy enemy)
     {
-        _isActiveTurn = true;
+        // commented out until a basic enemy AI is fleshed out.
+        // _isActiveTurn = true;
     }
 
 
     public void EndTurn()
     {
         _isActiveTurn = false;
-        battleInterface.gameObject.SetActive(false);
+        BattleUIHandler.Instance.ToggleActionMenu(false);
     }
 }

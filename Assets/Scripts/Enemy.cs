@@ -19,6 +19,11 @@ public class Enemy : MonoBehaviour
             ChargeTurnTimer();
     }
 
+    public virtual void TakeDamage(float damage)
+    {
+        health -= damage;
+    }
+
     public virtual void ChargeTurnTimer()
     {
         if (turnTimer < turnTimerMax)

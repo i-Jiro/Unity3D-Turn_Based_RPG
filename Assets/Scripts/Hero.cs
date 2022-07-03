@@ -21,7 +21,9 @@ public class Hero : MonoBehaviour
 
     public virtual void Attack(Enemy enemy)
     {
-        //damage enemy.
+        Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
+        enemy.TakeDamage(10); //placeholder damage
+        EndTurn();
     }
 
     public virtual void Defend()
@@ -29,6 +31,11 @@ public class Hero : MonoBehaviour
         defence *= 2;
         Debug.Log(gameObject.name + " defends.");
         EndTurn();
+    }
+
+    public virtual void TakeDamage(float damage)
+    {
+        health -= damage;
     }
 
     //Charges character's turn meter based on it's speed.
