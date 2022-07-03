@@ -9,7 +9,7 @@ public class BattleManager : MonoBehaviour
     public List<Enemy> enemies;
     public List<Hero> heroes;
     private Hero _currentHero;
-    private bool _isActiveTurn = true;
+    private bool _isActiveTurn = false;
     public bool isActiveTurn
     {
         get { return _isActiveTurn; }
@@ -29,13 +29,11 @@ public class BattleManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        Debug.Log(enemies.Count);
     }
 
     private void Start()
     {
         _isFightActive = true;
-        _isActiveTurn = false;
     }
 
     public void ChoseAttack(Enemy enemy)
@@ -58,8 +56,7 @@ public class BattleManager : MonoBehaviour
 
     public void TakeActiveTurn(Enemy enemy)
     {
-        // commented out until a basic enemy AI is fleshed out.
-        // _isActiveTurn = true;
+         _isActiveTurn = true;
     }
 
 

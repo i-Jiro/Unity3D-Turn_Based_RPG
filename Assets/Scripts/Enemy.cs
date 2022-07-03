@@ -19,6 +19,13 @@ public class Enemy : MonoBehaviour
             ChargeTurnTimer();
     }
 
+    public virtual void Attack(Hero hero)
+    {
+        Debug.Log(gameObject.name + " attacked " + hero.gameObject.name);
+        hero.TakeDamage(10);
+        EndTurn();
+    }
+
     public virtual void TakeDamage(float damage)
     {
         health -= damage;
@@ -32,13 +39,27 @@ public class Enemy : MonoBehaviour
         }
         else if (turnTimer > turnTimerMax)
         {
-            TakeTurn();
             Debug.Log(gameObject.name + " has reached it's turn.");
+            TakeTurn();         
         }
     }
 
     public virtual void TakeTurn()
     {
         BattleManager.Instance.TakeActiveTurn(this);
+        Attack(PickRandomHero());
+    }
+
+    public virtual Hero PickRandomHero()
+    {
+        int index = Random.Range(0, BattleManager.Instance.heroes.Count);
+        Hero hero = BattleManager.Instance.heroes[index];
+        return hero;
+    }
+
+    public virtual void EndTurn()
+    {
+        turnTimer = 0;
+        BattleManager.Instance.EndTurn();
     }
 }

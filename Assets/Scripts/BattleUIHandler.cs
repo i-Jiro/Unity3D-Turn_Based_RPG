@@ -67,7 +67,7 @@ public class BattleUIHandler : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 _index++;
-                if (_index >= enemies.Count)
+                if (_index > enemies.Count - 1)
                 {
                     _index = 0;
                 }
