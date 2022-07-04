@@ -16,7 +16,11 @@ public class BattleManager : MonoBehaviour
         get { return _isActiveTurn; }
         set { _isActiveTurn = value; }
     }
+
     private bool _isFightActive = false;
+
+    public delegate void ActiveTurnEvent(bool value);
+    public static ActiveTurnEvent OnActiveTurn;
 
     private void OnEnable()
     {
@@ -45,6 +49,16 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         _isFightActive = true;
+        Intialize();
+    }
+
+    private void Intialize()
+    {
+        foreach(Hero hero in heroes)
+        {
+            hero.OnTakeActiveTurn += TakeActiveTurn;
+            hero.OnEndTurn += EndTurn;
+        }
     }
 
     public void ChoseAttack(Enemy enemy)
@@ -68,12 +82,14 @@ public class BattleManager : MonoBehaviour
     {
         _currentHero = hero;
         _isActiveTurn = true;
+        OnActiveTurn.Invoke(_isActiveTurn);
         BattleUIHandler.Instance.ToggleActionMenu(true);
     }
 
     public void TakeActiveTurn(Enemy enemy)
     {
          _isActiveTurn = true;
+        OnActiveTurn.Invoke(_isActiveTurn);
     }
 
     public Hero GetCurrentHero()
@@ -84,6 +100,7 @@ public class BattleManager : MonoBehaviour
     public void EndTurn()
     {
         _isActiveTurn = false;
+        OnActiveTurn(_isActiveTurn);
         BattleUIHandler.Instance.ToggleActionMenu(false);
     }
 }

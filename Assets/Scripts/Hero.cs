@@ -16,6 +16,7 @@ public class Hero : MonoBehaviour
 
     protected float turnTimer = 0;
     protected float turnTimerMax = 100;
+    protected bool isTurnTimerActive = false;
 
     public delegate void HealthEventHandler(float health);
     public event HealthEventHandler OnHealthChanged;
@@ -24,13 +25,30 @@ public class Hero : MonoBehaviour
     public delegate void ManaEventHandler(float mana);
     public event ManaEventHandler OnManaChanged;
 
+    public delegate void PlayerEventTakeTurn(Hero hero);
+    public event PlayerEventTakeTurn OnTakeActiveTurn;
+    public delegate void PlayerEventEndTurn();
+    public event PlayerEventEndTurn OnEndTurn;
+
+    private void Start()
+    {
+        isTurnTimerActive = true;
+        if (FindObjectOfType<BattleManager>())
+        {
+            BattleManager.OnActiveTurn += ToggleTurnTimer;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if(!BattleManager.Instance.isActiveTurn)
+        if(isTurnTimerActive)
             ChargeTurnTimer();
     }
-
+    public virtual void ToggleTurnTimer(bool value)
+    {
+        isTurnTimerActive = !value;
+    }
     public virtual void Attack(Enemy enemy)
     {
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
@@ -81,13 +99,15 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeTurn()
     {
-        BattleManager.Instance.TakeActiveTurn(this);
+        //BattleManager.Instance.TakeActiveTurn(this);
+        OnTakeActiveTurn.Invoke(this);
     }
 
     public virtual void EndTurn()
     {
         turnTimer = 0;
-        BattleManager.Instance.EndTurn();
+        //BattleManager.Instance.EndTurn();
+        OnEndTurn.Invoke();
     }
 
 }

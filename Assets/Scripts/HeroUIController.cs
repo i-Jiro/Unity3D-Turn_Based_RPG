@@ -53,19 +53,19 @@ public class HeroUIController : MonoBehaviour
         hero.OnManaChanged += UpdateMana;
     }
 
-    public void UpdateHealth(float health)
+    private void UpdateHealth(float health)
     {
         _healthBar.value = Mathf.Clamp(health, 0, _maxHealth);
         _healthText.SetText(health + " / " + _maxHealth);
     }
 
-    public void UpdateMana(float mana)
+    private void UpdateMana(float mana)
     {
         _manaBar.value = Mathf.Clamp(mana, 0, _maxMana);
         _manaText.SetText(mana + " / " + _maxMana);
     }
 
-    public void UpdateTurnTimer(float time)
+    private void UpdateTurnTimer(float time)
     {
         _timerBar.value = Mathf.Clamp(time, 0, 100);
     }
