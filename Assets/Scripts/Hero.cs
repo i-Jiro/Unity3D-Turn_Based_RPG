@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
+    public string charName = "";
     public float health = 100;
+    public float maxHealth = 100;
     public float mana = 100;
+    public float maxMana = 100;
     public float defence = 10;
     public float speed = 1;
+
+    private HeroUIController _heroUI;
 
     protected float turnTimer = 0;
     protected float turnTimerMax = 100;
@@ -36,6 +41,8 @@ public class Hero : MonoBehaviour
     public virtual void TakeDamage(float damage)
     {
         health -= damage;
+        if (_heroUI != null)
+            _heroUI.UpdateHealth(health);
     }
 
     //Charges character's turn meter based on it's speed.
@@ -44,12 +51,19 @@ public class Hero : MonoBehaviour
         if (turnTimer < turnTimerMax)
         {
             turnTimer += Time.deltaTime * speed;
+            if (_heroUI != null)
+                _heroUI.UpdateTurnTimer(turnTimer);
         }
         else if (turnTimer > turnTimerMax)
         {
             TakeTurn();
             Debug.Log(gameObject.name + " has reached it's turn.");
         }
+    }
+
+    public void SetHeroUI(HeroUIController heroUIController)
+    {
+        _heroUI = heroUIController;
     }
 
     public virtual void TakeTurn()
