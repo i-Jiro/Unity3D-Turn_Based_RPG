@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BattleManager : MonoBehaviour
 {
-    public static BattleManager Instance;
+    public static BattleManager Instance { get; private set; }
 
     public List<Enemy> enemies;
     public List<Hero> heroes;
@@ -41,6 +41,12 @@ public class BattleManager : MonoBehaviour
         _currentHero.Attack(enemy);
     }
 
+    public void ChoseAbility(Ability ability)
+    {
+        Debug.Log(ability.name + "activated.");
+       // _currentHero.UseAbility(ability);
+    }
+
     public void ChoseDefend()
     {
         _currentHero.Defend();
@@ -59,6 +65,10 @@ public class BattleManager : MonoBehaviour
          _isActiveTurn = true;
     }
 
+    public Hero GetCurrentHero()
+    {
+        return _currentHero;
+    }
 
     public void EndTurn()
     {

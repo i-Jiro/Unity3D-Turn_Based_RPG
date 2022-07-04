@@ -16,11 +16,6 @@ public class HeroUIController : MonoBehaviour
     private float _maxHealth;
     private float _maxMana;
 
-    private void Awake()
-    {
-        gameObject.SetActive(false);
-    }
-
     public void Initialize(Hero hero)
     {
         SetHero(hero);

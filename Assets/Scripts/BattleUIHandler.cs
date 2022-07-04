@@ -2,16 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BattleUIHandler : MonoBehaviour
 {
-    public static BattleUIHandler Instance;
+    public static BattleUIHandler Instance { get; private set; }
+
     [SerializeField] Button _attackButton;
     [SerializeField] Button _defendButton;
+    [SerializeField] Button _abilitiesButton;
     [SerializeField] GameObject _actionMenu;
+    [SerializeField] GameObject _abilitiesMenu;
+    [SerializeField] List<Button> _abilityButtons;
     [SerializeField] List<HeroUIController> _heroInfoControllers;
     [SerializeField] GameObject _selector;
     [SerializeField] float _selectorOffset = 2f;
+
     private bool _isSelectingEnemy = false;
     private int _index;
 
@@ -33,6 +39,7 @@ public class BattleUIHandler : MonoBehaviour
         {
             _attackButton.onClick.AddListener(StartSelectEnemy);
             _defendButton.onClick.AddListener(BattleManager.Instance.ChoseDefend);
+            _abilitiesButton.onClick.AddListener(OnClickedAbility);
             InitializeHeroUI();
         }
         else
@@ -43,10 +50,15 @@ public class BattleUIHandler : MonoBehaviour
 
     private void InitializeHeroUI()
     {
-        // There must be a minimum amounts of hero UI controllers that to the number of heroes on scene.
+   
         // If there is any leftover Hero UIs that don't need to be assigned, they will not be active and displayed.
-        for (int i = 0; i < BattleManager.Instance.heroes.Count; i++)
+        for (int i = 0; i < _heroInfoControllers.Count; i++)
         {
+            if(i >= BattleManager.Instance.heroes.Count)
+            {
+                _heroInfoControllers[i].gameObject.SetActive(false);
+                continue;
+            }
             Hero hero = BattleManager.Instance.heroes[i];
             _heroInfoControllers[i].Initialize(hero);
         }
@@ -55,6 +67,27 @@ public class BattleUIHandler : MonoBehaviour
     private void Update()
     {
         MoveEnemySelector();
+    }
+
+    //Display abilities menu of availiable skills for the hero
+    public void OnClickedAbility()
+    {
+        _actionMenu.gameObject.SetActive(false);
+        _abilitiesMenu.gameObject.SetActive(true);
+        Hero currentHero = BattleManager.Instance.GetCurrentHero();
+        for(int i = 0; i < _abilityButtons.Count; i++)
+        {
+            //Buttons that are not assigned an ability are hidden.
+            if(i >= currentHero.abilities.Count)
+            {
+                _abilityButtons[i].gameObject.SetActive(false);
+                continue;
+            }
+            Ability ability = currentHero.abilities[i];
+            string abilityName = ability.AbilityName;
+            _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
+            _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); });
+        }
     }
 
     public void ToggleActionMenu(bool value)
@@ -81,7 +114,7 @@ public class BattleUIHandler : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 _index++;
-                if (_index > enemies.Count - 1)
+                if (_index >= enemies.Count)
                 {
                     _index = 0;
                 }
@@ -98,9 +131,9 @@ public class BattleUIHandler : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.Space)) //Confirm select current enemy to attack.
             {
-                BattleManager.Instance.ChoseAttack(enemies[_index]);
                 _selector.gameObject.SetActive(false);
                 _isSelectingEnemy = false;
+                BattleManager.Instance.ChoseAttack(enemies[_index]);
             }
             else if (Input.GetKeyDown(KeyCode.F)) //Returns player back to action menu if canceled.
             {

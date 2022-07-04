@@ -12,6 +12,8 @@ public class Hero : MonoBehaviour
     public float defence = 10;
     public float speed = 1;
 
+    public List<Ability> abilities;
+
     private HeroUIController _heroUI;
 
     protected float turnTimer = 0;
@@ -31,6 +33,13 @@ public class Hero : MonoBehaviour
         EndTurn();
     }
 
+    public virtual void UseAbility(Enemy enemy, Ability ability)
+    {
+        ability.TriggerAbility(enemy);
+        mana -= ability.manaCost;
+        _heroUI.UpdateMana(mana);
+    }
+
     public virtual void Defend()
     {
         defence *= 2;
@@ -38,9 +47,9 @@ public class Hero : MonoBehaviour
         EndTurn();
     }
 
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float rawDamage)
     {
-        health -= damage;
+        health -= rawDamage;
         if (_heroUI != null)
             _heroUI.UpdateHealth(health);
     }
