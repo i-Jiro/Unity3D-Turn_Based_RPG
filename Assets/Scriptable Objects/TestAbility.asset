@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d71892f474a000f47a74e862693c72ca, type: 3}
   m_Name: TestAbility
   m_EditorClassIdentifier: 
-  AbilityName: Test Ability
+  AbilityName: Test
   baseDamage: 1
   manaCost: 1
   userParticlePrefab: {fileID: 0}

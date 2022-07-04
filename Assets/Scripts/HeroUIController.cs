@@ -12,14 +12,30 @@ public class HeroUIController : MonoBehaviour
     [SerializeField] Slider _healthBar;
     [SerializeField] TextMeshProUGUI _healthText;
     [SerializeField] TextMeshProUGUI _manaText;
-    private Hero _hero;
     private float _maxHealth;
     private float _maxMana;
+    private Hero _hero;
+
+    private void OnEnable()
+    {
+        if (_hero != null)
+            Initialize(_hero);
+    }
+
+    private void OnDisable()
+    {
+        if (_hero != null)
+        {
+            _hero.OnHealthChanged -= UpdateHealth;
+            _hero.OnManaChanged -= UpdateMana;
+            _hero.OnTurnTimeChanged -= UpdateTurnTimer;
+        }
+    }
 
     public void Initialize(Hero hero)
     {
-        SetHero(hero);
-        _nameText.SetText(_hero.charName);
+        _hero = hero;
+        _nameText.SetText(hero.charName);
 
         _maxHealth = hero.maxHealth;
         _healthBar.maxValue = _maxHealth;
@@ -31,6 +47,10 @@ public class HeroUIController : MonoBehaviour
 
         _timerBar.maxValue = 100;
         gameObject.SetActive(true);
+
+        hero.OnHealthChanged += UpdateHealth;
+        hero.OnTurnTimeChanged += UpdateTurnTimer;
+        hero.OnManaChanged += UpdateMana;
     }
 
     public void UpdateHealth(float health)
@@ -49,11 +69,4 @@ public class HeroUIController : MonoBehaviour
     {
         _timerBar.value = Mathf.Clamp(time, 0, 100);
     }
-
-    public void SetHero(Hero hero)
-    {
-        _hero = hero;
-        _hero.SetHeroUI(this);
-    }
-
 }

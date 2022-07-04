@@ -9,6 +9,7 @@ public class BattleManager : MonoBehaviour
     public List<Enemy> enemies;
     public List<Hero> heroes;
     private Hero _currentHero;
+    private Enemy _selectedEnemy;
     private bool _isActiveTurn = false;
     public bool isActiveTurn
     {
@@ -17,6 +18,10 @@ public class BattleManager : MonoBehaviour
     }
     private bool _isFightActive = false;
 
+    private void OnEnable()
+    {
+        BattleUIHandler.OnSelectEnemy += SetSelectedEnemy;
+    }
 
     private void Awake()
     {
@@ -31,6 +36,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private void SetSelectedEnemy(Enemy enemy)
+    {
+        _selectedEnemy = enemy;
+        Debug.Log("Set Enemy: " + enemy.gameObject.name);
+    }
+
     private void Start()
     {
         _isFightActive = true;
@@ -43,8 +54,8 @@ public class BattleManager : MonoBehaviour
 
     public void ChoseAbility(Ability ability)
     {
-        Debug.Log(ability.name + "activated.");
-       // _currentHero.UseAbility(ability);
+        Debug.Log(ability.name + " activated.");
+       //_currentHero.UseAbility(ability);
     }
 
     public void ChoseDefend()

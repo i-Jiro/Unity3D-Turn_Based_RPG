@@ -10,10 +10,9 @@ public class Ability : ScriptableObject
     public int manaCost = 1;
     public GameObject userParticlePrefab;
     public GameObject targetParticlePrefb;
-    private GameObject _user;
     //private GameObject _target;
 
-    public void TriggerAbility(Enemy enemy)
+    public void TriggerAbility(Hero hero , Enemy enemy)
     {
         GameObject _target = enemy.gameObject;
         if(targetParticlePrefb != null)
@@ -22,7 +21,7 @@ public class Ability : ScriptableObject
         }
         if(userParticlePrefab != null)
         {
-            Instantiate(userParticlePrefab, _user.transform.position, userParticlePrefab.transform.rotation);
+            Instantiate(userParticlePrefab, hero.transform.position, userParticlePrefab.transform.rotation);
         }
         enemy.TakeDamage(baseDamage);
     }

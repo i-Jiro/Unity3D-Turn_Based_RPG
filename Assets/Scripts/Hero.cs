@@ -14,10 +14,15 @@ public class Hero : MonoBehaviour
 
     public List<Ability> abilities;
 
-    private HeroUIController _heroUI;
-
     protected float turnTimer = 0;
     protected float turnTimerMax = 100;
+
+    public delegate void HealthEventHandler(float health);
+    public event HealthEventHandler OnHealthChanged;
+    public delegate void TurnTimerEventHandler(float time);
+    public event TurnTimerEventHandler OnTurnTimeChanged;
+    public delegate void ManaEventHandler(float mana);
+    public event ManaEventHandler OnManaChanged;
 
     // Update is called once per frame
     void Update()
@@ -35,9 +40,10 @@ public class Hero : MonoBehaviour
 
     public virtual void UseAbility(Enemy enemy, Ability ability)
     {
-        ability.TriggerAbility(enemy);
+        ability.TriggerAbility(this, enemy);
         mana -= ability.manaCost;
-        _heroUI.UpdateMana(mana);
+        if (OnTurnTimeChanged != null)
+            OnManaChanged.Invoke(mana);
     }
 
     public virtual void Defend()
@@ -49,9 +55,12 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeDamage(float rawDamage)
     {
-        health -= rawDamage;
-        if (_heroUI != null)
-            _heroUI.UpdateHealth(health);
+        float damage = rawDamage - defence;
+        if (damage < 0)
+            damage = 0;
+        health -= damage;
+        if (OnHealthChanged != null)
+            OnHealthChanged.Invoke(health);
     }
 
     //Charges character's turn meter based on it's speed.
@@ -60,19 +69,14 @@ public class Hero : MonoBehaviour
         if (turnTimer < turnTimerMax)
         {
             turnTimer += Time.deltaTime * speed;
-            if (_heroUI != null)
-                _heroUI.UpdateTurnTimer(turnTimer);
+            if (OnTurnTimeChanged != null)
+                OnTurnTimeChanged.Invoke(turnTimer);
         }
         else if (turnTimer > turnTimerMax)
         {
             TakeTurn();
             Debug.Log(gameObject.name + " has reached it's turn.");
         }
-    }
-
-    public void SetHeroUI(HeroUIController heroUIController)
-    {
-        _heroUI = heroUIController;
     }
 
     public virtual void TakeTurn()

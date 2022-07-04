@@ -21,6 +21,9 @@ public class BattleUIHandler : MonoBehaviour
     private bool _isSelectingEnemy = false;
     private int _index;
 
+    public delegate void SelectedEnemy(Enemy enemy);
+    public static event SelectedEnemy OnSelectEnemy;
+
     private void Awake()
     {
         if (Instance == null)
@@ -133,6 +136,7 @@ public class BattleUIHandler : MonoBehaviour
             {
                 _selector.gameObject.SetActive(false);
                 _isSelectingEnemy = false;
+                OnSelectEnemy.Invoke(enemies[_index]);
                 BattleManager.Instance.ChoseAttack(enemies[_index]);
             }
             else if (Input.GetKeyDown(KeyCode.F)) //Returns player back to action menu if canceled.

@@ -22,7 +22,7 @@ public class Enemy : MonoBehaviour
     public virtual void Attack(Hero hero)
     {
         Debug.Log(gameObject.name + " attacked " + hero.gameObject.name);
-        hero.TakeDamage(10);
+        hero.TakeDamage(15);
         EndTurn();
     }
 

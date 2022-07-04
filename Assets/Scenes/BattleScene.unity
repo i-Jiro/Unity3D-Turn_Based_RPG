@@ -1622,7 +1622,8 @@ MonoBehaviour:
   maxMana: 100
   defence: 10
   speed: 25
-  abilities: []
+  abilities:
+  - {fileID: 11400000, guid: a9b61e4511ca3064b90a13aeba951017, type: 2}
 --- !u!1 &515661472
 GameObject:
   m_ObjectHideFlags: 0
