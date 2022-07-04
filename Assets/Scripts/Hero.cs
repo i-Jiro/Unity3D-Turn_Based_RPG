@@ -25,10 +25,10 @@ public class Hero : MonoBehaviour
     public delegate void ManaEventHandler(float mana);
     public event ManaEventHandler OnManaChanged;
 
-    public delegate void PlayerEventTakeTurn(Hero hero);
-    public event PlayerEventTakeTurn OnTakeActiveTurn;
-    public delegate void PlayerEventEndTurn();
-    public event PlayerEventEndTurn OnEndTurn;
+    public delegate void EventTakeTurn(Hero hero);
+    public event EventTakeTurn OnTakeActiveTurn;
+    public delegate void EventEndTurn();
+    public event EventEndTurn OnEndTurn;
 
     private void Start()
     {
@@ -43,7 +43,7 @@ public class Hero : MonoBehaviour
     void Update()
     {
         if(isTurnTimerActive)
-            ChargeTurnTimer();
+            TickTurnTimer();
     }
     public virtual void ToggleTurnTimer(bool value)
     {
@@ -82,7 +82,7 @@ public class Hero : MonoBehaviour
     }
 
     //Charges character's turn meter based on it's speed.
-    public virtual void ChargeTurnTimer()
+    public virtual void TickTurnTimer()
     {
         if (turnTimer < turnTimerMax)
         {

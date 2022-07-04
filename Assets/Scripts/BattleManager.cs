@@ -59,6 +59,11 @@ public class BattleManager : MonoBehaviour
             hero.OnTakeActiveTurn += TakeActiveTurn;
             hero.OnEndTurn += EndTurn;
         }
+        foreach(Enemy enemy in enemies)
+        {
+            enemy.OnTakeActiveTurn += TakeActiveTurn;
+            enemy.OnEndTurn += EndTurn;
+        }
     }
 
     public void ChoseAttack(Enemy enemy)

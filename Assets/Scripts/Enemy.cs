@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public string Name = "";
     public float health = 100;
     public float mana = 100;
     public float defence = 10;
@@ -11,12 +12,35 @@ public class Enemy : MonoBehaviour
 
     protected float turnTimer = 0;
     protected float turnTimerMax = 100;
+    protected bool isTurnTimerActive = false;
+
+    protected List<Hero> heroes;
+
+    public delegate void EventTakeTurn(Enemy enemy);
+    public event EventTakeTurn OnTakeActiveTurn;
+    public delegate void EventEndTurn();
+    public event EventEndTurn OnEndTurn;
+
+    private void Start()
+    {
+        isTurnTimerActive = true;
+        if (FindObjectOfType<BattleManager>())
+        {
+            BattleManager.OnActiveTurn += ToggleTurnTimer;
+            heroes = BattleManager.Instance.heroes;
+        }
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (!BattleManager.Instance.isActiveTurn)
-            ChargeTurnTimer();
+        if (isTurnTimerActive)
+            TickTurnTimer();
+    }
+
+    public virtual void ToggleTurnTimer(bool value)
+    {
+        isTurnTimerActive = !value;
     }
 
     public virtual void Attack(Hero hero)
@@ -31,7 +55,7 @@ public class Enemy : MonoBehaviour
         health -= damage;
     }
 
-    public virtual void ChargeTurnTimer()
+    public virtual void TickTurnTimer()
     {
         if (turnTimer < turnTimerMax)
         {
@@ -44,22 +68,29 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public virtual void TakeTurn()
-    {
-        BattleManager.Instance.TakeActiveTurn(this);
-        Attack(PickRandomHero());
-    }
-
     public virtual Hero PickRandomHero()
     {
-        int index = Random.Range(0, BattleManager.Instance.heroes.Count);
-        Hero hero = BattleManager.Instance.heroes[index];
+        int index = Random.Range(0, heroes.Count);
+        Hero hero = heroes[index];
         return hero;
     }
 
+    public virtual void TakeTurn()
+    {
+        OnTakeActiveTurn.Invoke(this);
+        Attack(PickRandomHero());
+    }
     public virtual void EndTurn()
     {
         turnTimer = 0;
-        BattleManager.Instance.EndTurn();
+        OnEndTurn.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        if (FindObjectOfType<BattleManager>())
+        {
+            BattleManager.OnActiveTurn -= ToggleTurnTimer;
+        }
     }
 }
