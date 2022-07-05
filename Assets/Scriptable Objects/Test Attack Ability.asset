@@ -9,11 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d71892f474a000f47a74e862693c72ca, type: 3}
-  m_Name: TestAbility
+  m_Script: {fileID: 11500000, guid: a3e17216f44a56c418406fe4f786ec9b, type: 3}
+  m_Name: Test Attack Ability
   m_EditorClassIdentifier: 
-  AbilityName: Test
-  baseDamage: 1
-  manaCost: 1
+  AbilityName: Strike
+  baseMagnitude: 50
+  manaCost: 10
+  abilityType: 0
   userParticlePrefab: {fileID: 0}
   targetParticlePrefb: {fileID: 0}

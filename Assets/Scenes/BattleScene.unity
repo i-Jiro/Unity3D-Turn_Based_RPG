@@ -1615,7 +1615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f21d47d9539e5564c8272e4caf71cdf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charName: Warrior
+  charName: Bam
   health: 100
   maxHealth: 100
   mana: 100
@@ -1623,7 +1623,8 @@ MonoBehaviour:
   defence: 10
   speed: 25
   abilities:
-  - {fileID: 11400000, guid: a9b61e4511ca3064b90a13aeba951017, type: 2}
+  - {fileID: 11400000, guid: 00efcf4d4a47b054d84f2fb4c3682a32, type: 2}
+  - {fileID: 11400000, guid: 5642ec0f2c1f9a44292f17abf39cb605, type: 2}
 --- !u!1 &515661472
 GameObject:
   m_ObjectHideFlags: 0
@@ -3588,6 +3589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27f23dcd191086438f54a5fc910c1e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: 
   health: 100
   mana: 100
   defence: 10
@@ -5120,6 +5122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27f23dcd191086438f54a5fc910c1e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: 
   health: 100
   mana: 100
   defence: 10

@@ -41,6 +41,7 @@ public class BattleManager : MonoBehaviour
         Intialize();
     }
 
+    //Initialize listeners for events from heroes and enemies that are deployed at start.
     private void Intialize()
     {
         foreach(Hero hero in heroes)
@@ -63,13 +64,7 @@ public class BattleManager : MonoBehaviour
     public void ChoseAbility(Ability ability)
     {
         Debug.Log(ability.name + " activated.");
-        switch (ability.abilityType)
-        {
-            case AbilityType.Buff:
-                break;
-            case AbilityType.Heal:
-                break;
-        }
+        _currentHero.UseAbility(ability);
     }
 
     public void ChoseAbility(Enemy enemy, Ability ability)

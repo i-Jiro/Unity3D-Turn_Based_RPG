@@ -57,30 +57,31 @@ public class Hero : MonoBehaviour
     }
 
     //For abilities that target enemys
-    public virtual void UseAbility(Enemy enemy, Ability ability)
+    public virtual void UseAbility(Enemy enemyTarget, Ability ability)
     {
-        Debug.Log(charName + " used " + ability.name + "on" + enemy.gameObject.name);
-        if (ability.targetParticlePrefb != null)
-        {
-            Instantiate(ability.targetParticlePrefb, enemy.transform.position, ability.targetParticlePrefb.transform.rotation);
-        }
-        if (ability.userParticlePrefab != null)
-        {
-            Instantiate(ability.userParticlePrefab, transform.position, ability.userParticlePrefab.transform.rotation);
-        }
-        mana -= ability.manaCost;
+        AttackAbility attackAbility = ability as AttackAbility;
+        attackAbility.TriggerAbility(enemyTarget, this);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(mana);
         EndTurn();
     }
 
     //For abilities that target self
-    public virtual void UseAbility(Ability abilty)
+    public virtual void UseAbility(Ability ability)
     {
+        Debug.Log(charName + " used " + ability.name);
+        BuffAbility buffAbility = ability as BuffAbility;
+        if (ability.targetParticlePrefb != null)
+        {
+            Instantiate(ability.targetParticlePrefb, transform.position, ability.targetParticlePrefb.transform.rotation);
+        }
+        buffAbility.TriggerAbility(this);
+        if (OnManaChanged != null)
+            OnManaChanged.Invoke(mana);
         EndTurn();
     }
 
-    //For abilities that party members
+    //For abilities that target party members
     public virtual void UseAbility(Hero hero, Ability ability)
     {
         EndTurn();

@@ -22,6 +22,7 @@ public class BattleUIHandler : MonoBehaviour
 
     private HeroChoiceState _currentState;
     private bool _isSelectingEnemy = false;
+    private bool _isSelectingAlly = false;
     private int _index;
     private Ability _selectedAbility;
 
@@ -49,7 +50,7 @@ public class BattleUIHandler : MonoBehaviour
         {
             _attackButton.onClick.AddListener(delegate { StartSelectEnemy(HeroChoiceState.Attack); });
             _defendButton.onClick.AddListener(BattleManager.Instance.ChoseDefend);
-            _abilitiesButton.onClick.AddListener(ToggleAbilitiesMenu);
+            _abilitiesButton.onClick.AddListener(DisplayAbilitiesMenu);
             InitializeHeroUI();
         }
         else
@@ -80,7 +81,7 @@ public class BattleUIHandler : MonoBehaviour
     }
 
     //Display abilities menu of availiable skills for the hero
-    private void ToggleAbilitiesMenu()
+    private void DisplayAbilitiesMenu()
     {
         _actionMenu.gameObject.SetActive(false);
         _abilitiesMenu.gameObject.SetActive(true);
@@ -93,24 +94,41 @@ public class BattleUIHandler : MonoBehaviour
                 _abilityButtons[i].gameObject.SetActive(false);
                 continue;
             }
+
             Ability ability = currentHero.abilities[i];
             string abilityName = ability.AbilityName;
-            AbilityType abilityType = ability.abilityType;
+            float manaCost = ability.manaCost;
             _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
-            if(abilityType == AbilityType.Attack)
+
+            if (manaCost > currentHero.mana)
+            {
+                _abilityButtons[i].interactable = false;
+            }
+
+            if (ability.GetType() == typeof(AttackAbility))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(HeroChoiceState.Ability, ability); });
-                continue;
+                Debug.Log(abilityName + "is an Attack Ability.");
+            }
+            else if(ability.GetType() == typeof(BuffAbility))
+            {
+                _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _abilitiesMenu.SetActive(false); });
+                Debug.Log(abilityName + " is a Buff Ability.");
+            }
+            else
+            {
+                Debug.LogError("Unable to set an ability to a skill button.");
             }
         }
     }
 
     public void ToggleActionMenu(bool value)
     {
+        _currentState = HeroChoiceState.Idle;
         _actionMenu.gameObject.SetActive(value);
     }
 
-    //Disable action menu and enables a selectors to allow player to choose an enemy.
+    //Disable action menu and enables a selector to allow player to choose an enemy.
     private void StartSelectEnemy(HeroChoiceState state)
     {
         _currentState = state;
@@ -120,7 +138,7 @@ public class BattleUIHandler : MonoBehaviour
         _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(0, _selectorOffset, 0);
         _index = 0;
     }
-
+    //Overload for abilities that require targeting enemies.
     private void StartSelectEnemy(HeroChoiceState state, Ability ability)
     {
         _abilitiesMenu.gameObject.SetActive(false);
@@ -170,8 +188,6 @@ public class BattleUIHandler : MonoBehaviour
                         Debug.LogError("In unknown state in Battle UI Handler!");
                         break;
                 }
-
-                //BattleManager.Instance.ChoseAttack(enemies[_index]);
             }
             else if (Input.GetKeyDown(KeyCode.F)) //Returns player back to action menu if canceled.
             {
