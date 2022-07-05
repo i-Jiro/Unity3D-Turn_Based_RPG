@@ -50,9 +50,16 @@ public class Enemy : MonoBehaviour
         EndTurn();
     }
 
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float rawDamage)
     {
-        health -= damage;
+        health -= rawDamage;
+    }
+
+    public virtual Hero PickRandomHero()
+    {
+        int index = Random.Range(0, heroes.Count);
+        Hero hero = heroes[index];
+        return hero;
     }
 
     public virtual void TickTurnTimer()
@@ -66,13 +73,6 @@ public class Enemy : MonoBehaviour
             Debug.Log(gameObject.name + " has reached it's turn.");
             TakeTurn();         
         }
-    }
-
-    public virtual Hero PickRandomHero()
-    {
-        int index = Random.Range(0, heroes.Count);
-        Hero hero = heroes[index];
-        return hero;
     }
 
     public virtual void TakeTurn()

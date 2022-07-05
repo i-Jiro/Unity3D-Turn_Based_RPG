@@ -9,13 +9,7 @@ public class BattleManager : MonoBehaviour
     public List<Enemy> enemies;
     public List<Hero> heroes;
     private Hero _currentHero;
-    private Enemy _selectedEnemy;
     private bool _isActiveTurn = false;
-    public bool isActiveTurn
-    {
-        get { return _isActiveTurn; }
-        set { _isActiveTurn = value; }
-    }
 
     private bool _isFightActive = false;
 
@@ -24,7 +18,8 @@ public class BattleManager : MonoBehaviour
 
     private void OnEnable()
     {
-        BattleUIHandler.OnSelectEnemy += SetSelectedEnemy;
+        BattleUIHandler.OnSelectEnemyAttack += ChoseAttack;
+        BattleUIHandler.OnSelectEnemyAbility += ChoseAbility;
     }
 
     private void Awake()
@@ -38,12 +33,6 @@ public class BattleManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    private void SetSelectedEnemy(Enemy enemy)
-    {
-        _selectedEnemy = enemy;
-        Debug.Log("Set Enemy: " + enemy.gameObject.name);
     }
 
     private void Start()
@@ -74,7 +63,18 @@ public class BattleManager : MonoBehaviour
     public void ChoseAbility(Ability ability)
     {
         Debug.Log(ability.name + " activated.");
-       //_currentHero.UseAbility(ability);
+        switch (ability.abilityType)
+        {
+            case AbilityType.Buff:
+                break;
+            case AbilityType.Heal:
+                break;
+        }
+    }
+
+    public void ChoseAbility(Enemy enemy, Ability ability)
+    {
+        _currentHero.UseAbility(enemy, ability);
     }
 
     public void ChoseDefend()

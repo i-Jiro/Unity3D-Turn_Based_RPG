@@ -8,6 +8,8 @@ public class BattleUIHandler : MonoBehaviour
 {
     public static BattleUIHandler Instance { get; private set; }
 
+    enum HeroChoiceState {Attack, Ability, Idle}
+
     [SerializeField] Button _attackButton;
     [SerializeField] Button _defendButton;
     [SerializeField] Button _abilitiesButton;
@@ -18,11 +20,16 @@ public class BattleUIHandler : MonoBehaviour
     [SerializeField] GameObject _selector;
     [SerializeField] float _selectorOffset = 2f;
 
+    private HeroChoiceState _currentState;
     private bool _isSelectingEnemy = false;
     private int _index;
+    private Ability _selectedAbility;
 
-    public delegate void SelectedEnemy(Enemy enemy);
-    public static event SelectedEnemy OnSelectEnemy;
+    public delegate void AttackSelectEnemyEvent(Enemy enemy);
+    public static event AttackSelectEnemyEvent OnSelectEnemyAttack;
+
+    public delegate void AbilitySelectEnemyEvent(Enemy enemy, Ability ability);
+    public static event AbilitySelectEnemyEvent OnSelectEnemyAbility;
 
     private void Awake()
     {
@@ -40,9 +47,9 @@ public class BattleUIHandler : MonoBehaviour
     {
         if(BattleManager.Instance != null)
         {
-            _attackButton.onClick.AddListener(StartSelectEnemy);
+            _attackButton.onClick.AddListener(delegate { StartSelectEnemy(HeroChoiceState.Attack); });
             _defendButton.onClick.AddListener(BattleManager.Instance.ChoseDefend);
-            _abilitiesButton.onClick.AddListener(OnClickedAbility);
+            _abilitiesButton.onClick.AddListener(ToggleAbilitiesMenu);
             InitializeHeroUI();
         }
         else
@@ -73,7 +80,7 @@ public class BattleUIHandler : MonoBehaviour
     }
 
     //Display abilities menu of availiable skills for the hero
-    public void OnClickedAbility()
+    private void ToggleAbilitiesMenu()
     {
         _actionMenu.gameObject.SetActive(false);
         _abilitiesMenu.gameObject.SetActive(true);
@@ -88,8 +95,13 @@ public class BattleUIHandler : MonoBehaviour
             }
             Ability ability = currentHero.abilities[i];
             string abilityName = ability.AbilityName;
+            AbilityType abilityType = ability.abilityType;
             _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
-            _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); });
+            if(abilityType == AbilityType.Attack)
+            {
+                _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(HeroChoiceState.Ability, ability); });
+                continue;
+            }
         }
     }
 
@@ -99,13 +111,21 @@ public class BattleUIHandler : MonoBehaviour
     }
 
     //Disable action menu and enables a selectors to allow player to choose an enemy.
-    private void StartSelectEnemy()
+    private void StartSelectEnemy(HeroChoiceState state)
     {
+        _currentState = state;
         ToggleActionMenu(false);
         _selector.gameObject.SetActive(true);
         _isSelectingEnemy = true;
         _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(0, _selectorOffset, 0);
         _index = 0;
+    }
+
+    private void StartSelectEnemy(HeroChoiceState state, Ability ability)
+    {
+        _abilitiesMenu.gameObject.SetActive(false);
+        _selectedAbility = ability;
+        StartSelectEnemy(state);
     }
 
     private void MoveEnemySelector()
@@ -136,8 +156,22 @@ public class BattleUIHandler : MonoBehaviour
             {
                 _selector.gameObject.SetActive(false);
                 _isSelectingEnemy = false;
-                OnSelectEnemy.Invoke(enemies[_index]);
-                BattleManager.Instance.ChoseAttack(enemies[_index]);
+                switch (_currentState)
+                {
+                    case HeroChoiceState.Attack:
+                        if(OnSelectEnemyAttack != null)
+                            OnSelectEnemyAttack.Invoke(enemies[_index]);
+                        break;
+                    case HeroChoiceState.Ability:
+                        if (OnSelectEnemyAbility != null)
+                            OnSelectEnemyAbility.Invoke(enemies[_index], _selectedAbility);
+                        break;
+                    default:
+                        Debug.LogError("In unknown state in Battle UI Handler!");
+                        break;
+                }
+
+                //BattleManager.Instance.ChoseAttack(enemies[_index]);
             }
             else if (Input.GetKeyDown(KeyCode.F)) //Returns player back to action menu if canceled.
             {
