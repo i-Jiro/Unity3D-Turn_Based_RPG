@@ -100,7 +100,7 @@ public class BattleUIHandler : MonoBehaviour
             float manaCost = ability.manaCost;
             _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
 
-            if (manaCost > currentHero.mana)
+            if (manaCost > currentHero.CurrentMana)
             {
                 _abilityButtons[i].interactable = false;
             }

@@ -8,7 +8,7 @@ public class AttackAbility : Ability
 {
     public void TriggerAbility(Enemy enemyTarget, Hero heroUser)
     {
-        Debug.Log(heroUser.charName + " used " + AbilityName + " on " + enemyTarget.gameObject.name);
+        Debug.Log(heroUser.Name + " used " + AbilityName + " on " + enemyTarget.gameObject.name);
         if (targetParticlePrefb != null)
         {
             Instantiate(targetParticlePrefb, enemyTarget.transform.position, targetParticlePrefb.transform.rotation);
@@ -18,7 +18,7 @@ public class AttackAbility : Ability
             Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
         }
         enemyTarget.TakeDamage(baseMagnitude);
-        heroUser.mana -= manaCost;
+        heroUser.UseMana(manaCost);
     }
 }
 

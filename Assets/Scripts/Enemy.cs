@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public string Name = "";
-    public float health = 100;
-    public float mana = 100;
-    public float defence = 10;
-    public float speed = 1;
+    [SerializeField] protected string charName = "";
+    public string Name
+    {
+        get { return charName; }
+        private set { if (value.Length > 8) { Debug.LogWarning("Enemy set with a name longer than 8 characters!"); } }
+    }
+    [SerializeField] protected float currentHealth = 100;
+    [SerializeField] protected float currentMana = 100;
+    [SerializeField] protected float defence = 10;
+    [SerializeField] protected float speed = 1;
 
     protected float turnTimer = 0;
     protected float turnTimerMax = 100;
@@ -52,7 +57,7 @@ public class Enemy : MonoBehaviour
 
     public virtual void TakeDamage(float rawDamage)
     {
-        health -= rawDamage;
+        currentHealth -= rawDamage;
     }
 
     public virtual Hero PickRandomHero()

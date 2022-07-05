@@ -8,7 +8,7 @@ public class BuffAbility : Ability
     //note to self: use enums to distringuish types of buffs?
     public void TriggerAbility(Hero heroUser)
     {
-        Debug.Log(heroUser.charName + " used " + AbilityName);
+        Debug.Log(heroUser.Name + " used " + AbilityName);
         if (targetParticlePrefb != null)
         {
             Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
@@ -18,7 +18,7 @@ public class BuffAbility : Ability
             Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
         }
         // Do something with hero stats here
-        heroUser.mana -= manaCost;
+        heroUser.UseMana(manaCost);
 
     }
 }

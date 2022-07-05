@@ -35,15 +35,15 @@ public class HeroUIController : MonoBehaviour
     public void Initialize(Hero hero)
     {
         _hero = hero;
-        _nameText.SetText(hero.charName);
+        _nameText.SetText(hero.Name);
 
-        _maxHealth = hero.maxHealth;
+        _maxHealth = hero.MaxHealth;
         _healthBar.maxValue = _maxHealth;
-        UpdateHealth(hero.health);
+        UpdateHealth(hero.CurrentHealth);
 
-        _maxMana = hero.maxMana;
+        _maxMana = hero.MaxMana;
         _manaBar.maxValue = _maxMana;
-        UpdateMana(hero.mana);
+        UpdateMana(hero.CurrentMana);
 
         _timerBar.maxValue = 100;
         gameObject.SetActive(true);

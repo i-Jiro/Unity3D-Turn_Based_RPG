@@ -4,13 +4,22 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-    public string charName = "";
-    public float health = 100;
-    public float maxHealth = 100;
-    public float mana = 100;
-    public float maxMana = 100;
-    public float defence = 10;
-    public float speed = 1;
+    [SerializeField] protected string charName = "";
+     public string Name
+     {
+        get { return charName;}
+        set { if(value.Length > 8) {Debug.LogWarning("Hero set with a name longer than 6 characters!");}}
+     }
+    [SerializeField] protected float currentHealth = 100;
+    public float CurrentHealth { get { return currentHealth; } private set { CurrentHealth = value; } }
+    [SerializeField] protected float maxHealth = 100;
+    public float MaxHealth { get { return maxHealth; } private set { maxHealth = value; } }
+    [SerializeField] protected float currentMana = 100;
+    public float CurrentMana { get { return currentMana; } private set { currentMana = value; } }
+    [SerializeField] protected  float maxMana = 100;
+    public float MaxMana { get { return maxMana; } private set { currentMana = value; } }
+    [SerializeField] protected float defence = 10;
+    [SerializeField] protected float speed = 1;
 
     public List<Ability> abilities;
 
@@ -62,7 +71,7 @@ public class Hero : MonoBehaviour
         AttackAbility attackAbility = ability as AttackAbility;
         attackAbility.TriggerAbility(enemyTarget, this);
         if (OnManaChanged != null)
-            OnManaChanged.Invoke(mana);
+            OnManaChanged.Invoke(currentMana);
         EndTurn();
     }
 
@@ -77,7 +86,7 @@ public class Hero : MonoBehaviour
         }
         buffAbility.TriggerAbility(this);
         if (OnManaChanged != null)
-            OnManaChanged.Invoke(mana);
+            OnManaChanged.Invoke(currentMana);
         EndTurn();
     }
 
@@ -99,9 +108,14 @@ public class Hero : MonoBehaviour
         float damage = rawDamage - defence;
         if (damage < 0)
             damage = 0;
-        health -= damage;
+        currentHealth -= damage;
         if (OnHealthChanged != null)
-            OnHealthChanged.Invoke(health);
+            OnHealthChanged.Invoke(currentHealth);
+    }
+
+    public virtual void UseMana(float manaUsed)
+    {
+        CurrentMana -= manaUsed;
     }
 
     //Charges character's turn meter based on it's speed.
