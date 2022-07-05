@@ -124,7 +124,6 @@ public class BattleUIHandler : MonoBehaviour
 
     public void ToggleActionMenu(bool value)
     {
-        _currentState = HeroChoiceState.Idle;
         _actionMenu.gameObject.SetActive(value);
     }
 
