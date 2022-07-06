@@ -26,6 +26,7 @@ public class Hero : MonoBehaviour
 
     [SerializeField] protected float MoveOffset = 3f;
     [SerializeField] protected float moveSpeed = 3f;
+    [SerializeField] protected float delaySeconds = 0.5f;
 
     public List<Ability> abilities;
 
@@ -44,7 +45,7 @@ public class Hero : MonoBehaviour
     public event ManaEventHandler OnManaChanged;
 
     public delegate void EventTakeTurn(Hero hero);
-    public event EventTakeTurn OnTakeActiveTurn;
+    public event EventTakeTurn OnStartTurn;
     public delegate void EventEndTurn();
     public event EventEndTurn OnEndTurn;
 
@@ -77,7 +78,6 @@ public class Hero : MonoBehaviour
         _animationHandler.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
         enemy.TakeDamage(10); //placeholder damage
-        //EndTurn();
     }
 
     //For abilities that target enemys
@@ -88,7 +88,6 @@ public class Hero : MonoBehaviour
         attackAbility.TriggerAbility(enemyTarget, this);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(currentMana);
-        EndTurn();
     }
 
     //For abilities that target self
@@ -104,13 +103,11 @@ public class Hero : MonoBehaviour
         buffAbility.TriggerAbility(this);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(currentMana);
-        EndTurn();
     }
 
     //For abilities that target party members
     public virtual void UseAbility(Hero hero, Ability ability)
     {
-        EndTurn();
     }
 
     public virtual void Defend()
@@ -119,7 +116,6 @@ public class Hero : MonoBehaviour
         defence *= defenseMultiplier;
         _animationHandler.PlayDefend();
         Debug.Log(gameObject.name + " defends.");
-        EndTurn();
     }
 
     public virtual void ResetDefence()
@@ -149,7 +145,8 @@ public class Hero : MonoBehaviour
             currentMana = maxMana;
         else
             currentMana += manaRegenRate;
-        OnManaChanged.Invoke(currentMana);
+        if (OnManaChanged != null)
+            OnManaChanged.Invoke(currentMana);
     }
 
     public virtual void UseMana(float manaUsed)
@@ -180,15 +177,23 @@ public class Hero : MonoBehaviour
         _animationHandler.PlayReady();
         RegenerateMana();
         ResetDefence();
-        OnTakeActiveTurn.Invoke(this);
+        OnStartTurn.Invoke(this);
     }
 
+    //Called at the end of certain animations (attack, defend, abilities) by animations events.
     public virtual void EndTurn()
     {
         StartCoroutine(MoveRight());
         _animationHandler.PlayMoveBackward();
         turnTimer = 0;
         _animationHandler.PlayIdle();
+        //Delay in Battle Manager instead?
+        StartCoroutine(WaitDelay(delaySeconds));
+    }
+
+    private IEnumerator WaitDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
         OnEndTurn.Invoke();
     }
 

@@ -47,7 +47,7 @@ public class BattleManager : MonoBehaviour
     {
         foreach(Hero hero in heroes)
         {
-            hero.OnTakeActiveTurn += TakeActiveTurn;
+            hero.OnStartTurn += TakeActiveTurn;
             hero.OnEndTurn += EndTurn;
         }
         foreach(Enemy enemy in enemies)

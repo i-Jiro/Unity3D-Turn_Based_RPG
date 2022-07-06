@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[RequireComponent(typeof(UISoundHandler))]
 public class BattleUIHandler : MonoBehaviour
 {
     public static BattleUIHandler Instance { get; private set; }
@@ -26,6 +27,7 @@ public class BattleUIHandler : MonoBehaviour
     private bool _isInAbilityMenu = false;
     private int _index;
     private Ability _selectedAbility;
+    private UISoundHandler _soundHandler;
 
     public delegate void AttackSelectEnemyEvent(Enemy enemy);
     public static event AttackSelectEnemyEvent OnSelectEnemyAttack;
@@ -43,6 +45,7 @@ public class BattleUIHandler : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        _soundHandler = GetComponent<UISoundHandler>();
     }
 
     private void Start()
@@ -114,6 +117,7 @@ public class BattleUIHandler : MonoBehaviour
                 _abilityButtons[i].interactable = false;
             }
 
+            //Sort out abilities into buttons based on their ability script subclass type.
             if (ability.GetType() == typeof(AttackAbility))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
@@ -163,6 +167,7 @@ public class BattleUIHandler : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 _index++;
+                _soundHandler.PlayHighBeep();
                 if (_index >= enemies.Count)
                 {
                     _index = 0;
@@ -172,6 +177,7 @@ public class BattleUIHandler : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 _index--;
+                _soundHandler.PlayLowBeep();
                 if (_index < 0)
                 {
                     _index = enemies.Count - 1;
