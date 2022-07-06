@@ -6,6 +6,7 @@ using UnityEngine;
 public class HeroAnimationHandler : MonoBehaviour
 {
     private Animator _animator;
+    public Animator Animator { get { return _animator; } private set { _animator = value; } }
 
     private void Awake()
     {
@@ -52,14 +53,14 @@ public class HeroAnimationHandler : MonoBehaviour
         _animator.SetBool("isReady", true);
     }
 
-    public void PlayForwardMove()
+    public void PlayMoveForward()
     {
-
+        _animator.SetTrigger("MoveForward");
     }
 
-    public void PlayBackwardMove()
+    public void PlayMoveBackward()
     {
-
+        _animator.SetTrigger("MoveBackward");
     }
 
     public void PlayWin()

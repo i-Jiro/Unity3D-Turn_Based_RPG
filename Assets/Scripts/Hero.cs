@@ -24,6 +24,8 @@ public class Hero : MonoBehaviour
     [SerializeField] protected float speed = 1;
     [SerializeField] protected float defenseMultiplier = 2f;
 
+    [SerializeField] protected float MoveOffset = 3f;
+
     public List<Ability> abilities;
 
     protected float turnTimer = 0;
@@ -74,7 +76,7 @@ public class Hero : MonoBehaviour
         _animationHandler.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
         enemy.TakeDamage(10); //placeholder damage
-        EndTurn();
+        //EndTurn();
     }
 
     //For abilities that target enemys
@@ -172,6 +174,8 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeTurn()
     {
+        StartCoroutine(MoveLeft());
+        _animationHandler.PlayMoveForward();
         RegenerateMana();
         ResetDefence();
         OnTakeActiveTurn.Invoke(this);
@@ -180,9 +184,35 @@ public class Hero : MonoBehaviour
 
     public virtual void EndTurn()
     {
+        StartCoroutine(MoveRight());
+        _animationHandler.PlayMoveBackward();
         turnTimer = 0;
         _animationHandler.PlayIdle();
         OnEndTurn.Invoke();
     }
+
+    //Moves hero forward to show that it's ready to commands.
+    private IEnumerator MoveLeft()
+    {
+        float startingXpos = transform.position.x;
+        while(transform.position.x  > startingXpos - MoveOffset)
+        {
+            transform.Translate(Vector3.left * 5f * Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    //Moves here back to original starting position.
+    private IEnumerator MoveRight()
+    {
+        float startingXpos = transform.position.x;
+        while (transform.position.x < startingXpos + MoveOffset)
+        {
+            transform.Translate(Vector3.right * 5f * Time.deltaTime);
+            yield return null;
+        }
+    }
+
+
 
 }

@@ -21,45 +21,45 @@ AnimationClip:
   - curve:
     - time: 0
       value: {fileID: 1200103114, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.07692308
+    - time: 0.09090909
       value: {fileID: -1523002038, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.15384616
+    - time: 0.18181819
       value: {fileID: 1887425790, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.23076923
+    - time: 0.27272728
       value: {fileID: 2057116530, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.30769232
+    - time: 0.36363637
       value: {fileID: 1256767115, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.3846154
+    - time: 0.45454547
       value: {fileID: -2119389254, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.46153846
+    - time: 0.54545456
       value: {fileID: 2089296652, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.53846157
+    - time: 0.6363636
       value: {fileID: -284576959, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.61538464
+    - time: 0.72727275
       value: {fileID: -1878794050, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.6923077
+    - time: 0.8181818
       value: {fileID: 1317653744, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.7692308
+    - time: 0.90909094
       value: {fileID: -311451535, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.84615386
-      value: {fileID: -615367067, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 0.9230769
-      value: {fileID: 1373368996, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
     - time: 1
+      value: {fileID: -615367067, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
+    - time: 1.0909091
+      value: {fileID: 1373368996, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
+    - time: 1.1818181
       value: {fileID: -1858305138, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 1.0769231
+    - time: 1.2727273
       value: {fileID: -872431084, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 1.1538461
+    - time: 1.3636364
       value: {fileID: -1187105230, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 1.2307693
+    - time: 1.4545455
       value: {fileID: -975143428, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
-    - time: 1.3076923
+    - time: 1.5454545
       value: {fileID: -1263006241, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
-  m_SampleRate: 13
+  m_SampleRate: 11
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -97,7 +97,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 1.3846154
+    m_StopTime: 1.6363636
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -116,4 +116,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 1.5454545
+    functionName: EndTurn
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
