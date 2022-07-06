@@ -76,11 +76,11 @@ public class Enemy : MonoBehaviour
         else if (turnTimer > turnTimerMax)
         {
             Debug.Log(gameObject.name + " has reached it's turn.");
-            TakeTurn();         
+            StartTurn();         
         }
     }
 
-    public virtual void TakeTurn()
+    public virtual void StartTurn()
     {
         OnTakeActiveTurn.Invoke(this);
         Attack(PickRandomHero());

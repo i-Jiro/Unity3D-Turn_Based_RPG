@@ -25,6 +25,7 @@ public class Hero : MonoBehaviour
     [SerializeField] protected float defenseMultiplier = 2f;
 
     [SerializeField] protected float MoveOffset = 3f;
+    [SerializeField] protected float moveSpeed = 3f;
 
     public List<Ability> abilities;
 
@@ -167,12 +168,12 @@ public class Hero : MonoBehaviour
         }
         else if (turnTimer > turnTimerMax)
         {
-            TakeTurn();
+            StartTurn();
             Debug.Log(gameObject.name + " has reached it's turn.");
         }
     }
 
-    public virtual void TakeTurn()
+    public virtual void StartTurn()
     {
         StartCoroutine(MoveLeft());
         _animationHandler.PlayMoveForward();
@@ -197,7 +198,7 @@ public class Hero : MonoBehaviour
         float startingXpos = transform.position.x;
         while(transform.position.x  > startingXpos - MoveOffset)
         {
-            transform.Translate(Vector3.left * 5f * Time.deltaTime);
+            transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
             yield return null;
         }
     }
@@ -208,7 +209,7 @@ public class Hero : MonoBehaviour
         float startingXpos = transform.position.x;
         while (transform.position.x < startingXpos + MoveOffset)
         {
-            transform.Translate(Vector3.right * 5f * Time.deltaTime);
+            transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
             yield return null;
         }
     }
