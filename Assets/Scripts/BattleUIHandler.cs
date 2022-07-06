@@ -8,7 +8,7 @@ public class BattleUIHandler : MonoBehaviour
 {
     public static BattleUIHandler Instance { get; private set; }
 
-    enum HeroChoiceState {Attack, Ability, Idle}
+    enum SelectorType {Attack, Ability}
 
     [SerializeField] Button _attackButton;
     [SerializeField] Button _defendButton;
@@ -20,9 +20,10 @@ public class BattleUIHandler : MonoBehaviour
     [SerializeField] GameObject _selector;
     [SerializeField] float _selectorOffset = 2f;
 
-    private HeroChoiceState _currentState;
+    private SelectorType _selectorType;
     private bool _isSelectingEnemy = false;
     private bool _isSelectingAlly = false;
+    private bool _isInAbilityMenu = false;
     private int _index;
     private Ability _selectedAbility;
 
@@ -48,7 +49,7 @@ public class BattleUIHandler : MonoBehaviour
     {
         if(BattleManager.Instance != null)
         {
-            _attackButton.onClick.AddListener(delegate { StartSelectEnemy(HeroChoiceState.Attack); });
+            _attackButton.onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Attack); });
             _defendButton.onClick.AddListener(BattleManager.Instance.ChoseDefend);
             _abilitiesButton.onClick.AddListener(DisplayAbilitiesMenu);
             InitializeHeroUI();
@@ -78,11 +79,19 @@ public class BattleUIHandler : MonoBehaviour
     private void Update()
     {
         MoveEnemySelector();
+        //If in the abilities menu, pressing escape will take you back to the action menu.
+        if(_isInAbilityMenu == true && Input.GetKeyDown(KeyCode.Escape))
+        {
+            _abilitiesMenu.SetActive(false);
+            _actionMenu.SetActive(true);
+            _isInAbilityMenu = false;
+        }
     }
 
     //Display abilities menu of availiable skills for the hero
     private void DisplayAbilitiesMenu()
     {
+        _isInAbilityMenu = true;
         _actionMenu.gameObject.SetActive(false);
         _abilitiesMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
@@ -107,7 +116,7 @@ public class BattleUIHandler : MonoBehaviour
 
             if (ability.GetType() == typeof(AttackAbility))
             {
-                _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(HeroChoiceState.Ability, ability); });
+                _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
                 Debug.Log(abilityName + "is an Attack Ability.");
             }
             else if(ability.GetType() == typeof(BuffAbility))
@@ -128,9 +137,9 @@ public class BattleUIHandler : MonoBehaviour
     }
 
     //Disable action menu and enables a selector to allow player to choose an enemy.
-    private void StartSelectEnemy(HeroChoiceState state)
+    private void StartSelectEnemy(SelectorType type)
     {
-        _currentState = state;
+        _selectorType = type;
         ToggleActionMenu(false);
         _selector.gameObject.SetActive(true);
         _isSelectingEnemy = true;
@@ -138,11 +147,11 @@ public class BattleUIHandler : MonoBehaviour
         _index = 0;
     }
     //Overload for abilities that require targeting enemies.
-    private void StartSelectEnemy(HeroChoiceState state, Ability ability)
+    private void StartSelectEnemy(SelectorType type, Ability ability)
     {
         _abilitiesMenu.gameObject.SetActive(false);
         _selectedAbility = ability;
-        StartSelectEnemy(state);
+        StartSelectEnemy(type);
     }
 
     private void MoveEnemySelector()
@@ -173,22 +182,22 @@ public class BattleUIHandler : MonoBehaviour
             {
                 _selector.gameObject.SetActive(false);
                 _isSelectingEnemy = false;
-                switch (_currentState)
+                switch (_selectorType)
                 {
-                    case HeroChoiceState.Attack:
+                    case SelectorType.Attack:
                         if(OnSelectEnemyAttack != null)
                             OnSelectEnemyAttack.Invoke(enemies[_index]);
                         break;
-                    case HeroChoiceState.Ability:
+                    case SelectorType.Ability:
                         if (OnSelectEnemyAbility != null)
                             OnSelectEnemyAbility.Invoke(enemies[_index], _selectedAbility);
                         break;
                     default:
-                        Debug.LogError("In unknown state in Battle UI Handler!");
+                        Debug.LogError("In unknown selector in Battle UI Handler!");
                         break;
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.F)) //Returns player back to action menu if canceled.
+            else if (Input.GetKeyDown(KeyCode.Escape)) //Returns player back to action menu if canceled.
             {
                 ToggleActionMenu(true);
                 _selector.gameObject.SetActive(false);

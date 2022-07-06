@@ -935,7 +935,7 @@ MonoBehaviour:
   currentMana: 100
   maxMana: 100
   defence: 10
-  speed: 100
+  speed: 25
   defenseMultiplier: 2
   abilities:
   - {fileID: 11400000, guid: 00efcf4d4a47b054d84f2fb4c3682a32, type: 2}

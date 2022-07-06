@@ -117,6 +117,16 @@ public class Hero : MonoBehaviour
         EndTurn();
     }
 
+    public virtual void ResetDefence()
+    {
+        if (isDefending)
+        {
+            defence /= defenseMultiplier;
+            isDefending = false;
+            _animationHandler.StopDefend();
+        }
+    }
+
     public virtual void TakeDamage(float rawDamage)
     {
         float damage = rawDamage - defence;
@@ -150,12 +160,7 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeTurn()
     {
-        if (isDefending)
-        {
-            defence /= defenseMultiplier;
-            isDefending = false;
-            _animationHandler.StopDefend();
-        }
+        ResetDefence();
         OnTakeActiveTurn.Invoke(this);
         _animationHandler.PlayReady();
     }
