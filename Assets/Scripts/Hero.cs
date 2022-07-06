@@ -9,7 +9,7 @@ public class Hero : MonoBehaviour
      public string Name
      {
         get { return charName;}
-        set { if(value.Length > 8) {Debug.LogWarning("Hero set with a name longer than 6 characters!");}}
+        set { if(value.Length > 8) {Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI.");}}
      }
     [SerializeField] protected float currentHealth = 100;
     public float CurrentHealth { get { return currentHealth; } private set { CurrentHealth = value; } }
@@ -19,6 +19,7 @@ public class Hero : MonoBehaviour
     public float CurrentMana { get { return currentMana; } private set { currentMana = value; } }
     [SerializeField] protected  float maxMana = 100;
     public float MaxMana { get { return maxMana; } private set { currentMana = value; } }
+    [SerializeField] protected float manaRegenRate = 10;
     [SerializeField] protected float defence = 10;
     [SerializeField] protected float speed = 1;
     [SerializeField] protected float defenseMultiplier = 2f;
@@ -137,6 +138,16 @@ public class Hero : MonoBehaviour
             OnHealthChanged.Invoke(currentHealth);
     }
 
+    public virtual void RegenerateMana()
+    {
+        Debug.Log("Regen");
+        if (currentMana + manaRegenRate > maxMana)
+            currentMana = maxMana;
+        else
+            currentMana += manaRegenRate;
+        OnManaChanged.Invoke(currentMana);
+    }
+
     public virtual void UseMana(float manaUsed)
     {
         CurrentMana -= manaUsed;
@@ -160,6 +171,7 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeTurn()
     {
+        RegenerateMana();
         ResetDefence();
         OnTakeActiveTurn.Invoke(this);
         _animationHandler.PlayReady();
@@ -168,7 +180,6 @@ public class Hero : MonoBehaviour
     public virtual void EndTurn()
     {
         turnTimer = 0;
-        //BattleManager.Instance.EndTurn();
         _animationHandler.PlayIdle();
         OnEndTurn.Invoke();
     }

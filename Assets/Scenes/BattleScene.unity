@@ -934,6 +934,7 @@ MonoBehaviour:
   maxHealth: 100
   currentMana: 100
   maxMana: 100
+  manaRegenRate: 10
   defence: 10
   speed: 25
   defenseMultiplier: 2
@@ -1778,6 +1779,7 @@ MonoBehaviour:
   maxHealth: 100
   currentMana: 100
   maxMana: 100
+  manaRegenRate: 10
   defence: 10
   speed: 25
   defenseMultiplier: 2
