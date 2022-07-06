@@ -177,10 +177,10 @@ public class Hero : MonoBehaviour
     {
         StartCoroutine(MoveLeft());
         _animationHandler.PlayMoveForward();
+        _animationHandler.PlayReady();
         RegenerateMana();
         ResetDefence();
         OnTakeActiveTurn.Invoke(this);
-        _animationHandler.PlayReady();
     }
 
     public virtual void EndTurn()

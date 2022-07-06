@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
     public delegate void EventEndTurn();
     public event EventEndTurn OnEndTurn;
 
-    private void Start()
+    protected virtual void Start()
     {
         isTurnTimerActive = true;
         if (FindObjectOfType<BattleManager>())

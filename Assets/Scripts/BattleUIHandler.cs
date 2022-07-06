@@ -9,6 +9,7 @@ public class BattleUIHandler : MonoBehaviour
     public static BattleUIHandler Instance { get; private set; }
 
     enum SelectorType {Attack, Ability}
+    private SelectorType _selectorType;
 
     [SerializeField] Button _attackButton;
     [SerializeField] Button _defendButton;
@@ -20,7 +21,6 @@ public class BattleUIHandler : MonoBehaviour
     [SerializeField] GameObject _selector;
     [SerializeField] float _selectorOffset = 2f;
 
-    private SelectorType _selectorType;
     private bool _isSelectingEnemy = false;
     private bool _isSelectingAlly = false;
     private bool _isInAbilityMenu = false;
@@ -143,7 +143,7 @@ public class BattleUIHandler : MonoBehaviour
         ToggleActionMenu(false);
         _selector.gameObject.SetActive(true);
         _isSelectingEnemy = true;
-        _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(0, _selectorOffset, 0);
+        _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(_selectorOffset, 0, 0);
         _index = 0;
     }
     //Overload for abilities that require targeting enemies.
@@ -167,7 +167,7 @@ public class BattleUIHandler : MonoBehaviour
                 {
                     _index = 0;
                 }
-                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(0, _selectorOffset, 0);
+                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffset, 0, 0);
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
@@ -176,7 +176,7 @@ public class BattleUIHandler : MonoBehaviour
                 {
                     _index = enemies.Count - 1;
                 }
-                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(0, _selectorOffset, 0);
+                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffset, 0 , 0);
             }
             else if (Input.GetKeyDown(KeyCode.Space)) //Confirm select current enemy to attack.
             {
