@@ -20,12 +20,14 @@ public class Hero : MonoBehaviour
     public float MaxMana { get { return maxMana; } private set { currentMana = value; } }
     [SerializeField] protected float defence = 10;
     [SerializeField] protected float speed = 1;
+    [SerializeField] protected float defenseMultiplier = 2f;
 
     public List<Ability> abilities;
 
     protected float turnTimer = 0;
     protected float turnTimerMax = 100;
     protected bool isTurnTimerActive = false;
+    protected bool isDefending = false;
 
     private HeroAnimationHandler _animationHandler;
 
@@ -105,7 +107,9 @@ public class Hero : MonoBehaviour
 
     public virtual void Defend()
     {
-        defence *= 2;
+        isDefending = true;
+        defence *= defenseMultiplier;
+        _animationHandler.PlayDefend();
         Debug.Log(gameObject.name + " defends.");
         EndTurn();
     }
@@ -143,7 +147,12 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeTurn()
     {
-        //BattleManager.Instance.TakeActiveTurn(this);
+        if (isDefending)
+        {
+            defence /= defenseMultiplier;
+            isDefending = false;
+            _animationHandler.StopDefend();
+        }
         OnTakeActiveTurn.Invoke(this);
         _animationHandler.PlayReady();
     }

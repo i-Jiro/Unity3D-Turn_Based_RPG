@@ -29,7 +29,12 @@ public class HeroAnimationHandler : MonoBehaviour
 
     public void PlayDefend()
     {
+        _animator.SetBool("isDefending", true);
+    }
 
+    public void StopDefend()
+    {
+        _animator.SetBool("isDefending", false);
     }
 
     public void PlayReady()
