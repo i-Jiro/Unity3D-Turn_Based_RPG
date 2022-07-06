@@ -19,12 +19,17 @@ public class HeroAnimationHandler : MonoBehaviour
 
     public void PlayAttack()
     {
-        _animator.SetTrigger("");
+        _animator.SetTrigger("AttackTrigger");
     }
 
     public void PlayGetDamaged()
     {
 
+    }
+
+    public void PlayBuff()
+    {
+        _animator.SetTrigger("BuffTrigger");
     }
 
     public void PlayDefend()

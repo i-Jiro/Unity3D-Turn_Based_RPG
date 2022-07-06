@@ -871,12 +871,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 740758783, guid: 4bed2be214f8e104591597e39d9dc421, type: 3}
+  m_Sprite: {fileID: -28138777, guid: 96d51aa98090ee548a7963931f9e1cb5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.56, y: 1.26}
+  m_Size: {x: 2.88, y: 2.88}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -891,7 +891,7 @@ Transform:
   m_GameObject: {fileID: 235420618}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.606, y: 0.14, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -935,7 +935,8 @@ MonoBehaviour:
   currentMana: 100
   maxMana: 100
   defence: 10
-  speed: 25
+  speed: 100
+  defenseMultiplier: 2
   abilities:
   - {fileID: 11400000, guid: 00efcf4d4a47b054d84f2fb4c3682a32, type: 2}
   - {fileID: 11400000, guid: 5642ec0f2c1f9a44292f17abf39cb605, type: 2}
@@ -1674,6 +1675,7 @@ GameObject:
   - component: {fileID: 506139768}
   - component: {fileID: 506139767}
   - component: {fileID: 506139771}
+  - component: {fileID: 506139772}
   m_Layer: 0
   m_Name: Hero
   m_TagString: Untagged
@@ -1778,9 +1780,22 @@ MonoBehaviour:
   maxMana: 100
   defence: 10
   speed: 25
+  defenseMultiplier: 2
   abilities:
   - {fileID: 11400000, guid: 00efcf4d4a47b054d84f2fb4c3682a32, type: 2}
   - {fileID: 11400000, guid: 5642ec0f2c1f9a44292f17abf39cb605, type: 2}
+--- !u!114 &506139772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506139766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818bb194c261b2c4c8ad7d33867b2118, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &515661472
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(HeroAnimationHandler))]
 public class Hero : MonoBehaviour
 {
     [SerializeField] protected string charName = "";
@@ -69,6 +70,7 @@ public class Hero : MonoBehaviour
     }
     public virtual void Attack(Enemy enemy)
     {
+        _animationHandler.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
         enemy.TakeDamage(10); //placeholder damage
         EndTurn();
@@ -88,6 +90,7 @@ public class Hero : MonoBehaviour
     public virtual void UseAbility(Ability ability)
     {
         Debug.Log(charName + " used " + ability.name);
+        _animationHandler.PlayBuff();
         BuffAbility buffAbility = ability as BuffAbility;
         if (ability.targetParticlePrefb != null)
         {
