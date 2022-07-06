@@ -22,9 +22,14 @@ public class HeroAnimationHandler : MonoBehaviour
         _animator.SetTrigger("AttackTrigger");
     }
 
+    public void PlaySpecialAttack()
+    {
+        _animator.SetTrigger("SpecialTrigger");
+    }
+
     public void PlayGetDamaged()
     {
-
+        _animator.SetTrigger("HurtTrigger");
     }
 
     public void PlayBuff()
@@ -47,7 +52,12 @@ public class HeroAnimationHandler : MonoBehaviour
         _animator.SetBool("isReady", true);
     }
 
-    public void PlayMove()
+    public void PlayForwardMove()
+    {
+
+    }
+
+    public void PlayBackwardMove()
     {
 
     }

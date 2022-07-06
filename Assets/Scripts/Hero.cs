@@ -80,6 +80,7 @@ public class Hero : MonoBehaviour
     //For abilities that target enemys
     public virtual void UseAbility(Enemy enemyTarget, Ability ability)
     {
+        _animationHandler.PlaySpecialAttack();
         AttackAbility attackAbility = ability as AttackAbility;
         attackAbility.TriggerAbility(enemyTarget, this);
         if (OnManaChanged != null)
@@ -130,6 +131,7 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeDamage(float rawDamage)
     {
+        _animationHandler.PlayGetDamaged();
         float damage = rawDamage - defence;
         if (damage < 0)
             damage = 0;
@@ -140,7 +142,6 @@ public class Hero : MonoBehaviour
 
     public virtual void RegenerateMana()
     {
-        Debug.Log("Regen");
         if (currentMana + manaRegenRate > maxMana)
             currentMana = maxMana;
         else
