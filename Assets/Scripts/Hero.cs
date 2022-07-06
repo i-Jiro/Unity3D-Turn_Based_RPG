@@ -27,6 +27,8 @@ public class Hero : MonoBehaviour
     protected float turnTimerMax = 100;
     protected bool isTurnTimerActive = false;
 
+    private HeroAnimationHandler _animationHandler;
+
     public delegate void HealthEventHandler(float health);
     public event HealthEventHandler OnHealthChanged;
     public delegate void TurnTimerEventHandler(float time);
@@ -38,6 +40,11 @@ public class Hero : MonoBehaviour
     public event EventTakeTurn OnTakeActiveTurn;
     public delegate void EventEndTurn();
     public event EventEndTurn OnEndTurn;
+
+    private void Awake()
+    {
+        _animationHandler = GetComponent<HeroAnimationHandler>();
+    }
 
     private void Start()
     {
@@ -138,12 +145,14 @@ public class Hero : MonoBehaviour
     {
         //BattleManager.Instance.TakeActiveTurn(this);
         OnTakeActiveTurn.Invoke(this);
+        _animationHandler.PlayReady();
     }
 
     public virtual void EndTurn()
     {
         turnTimer = 0;
         //BattleManager.Instance.EndTurn();
+        _animationHandler.PlayIdle();
         OnEndTurn.Invoke();
     }
 

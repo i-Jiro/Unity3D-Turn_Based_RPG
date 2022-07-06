@@ -8,6 +8,7 @@ public class BattleManager : MonoBehaviour
 
     public List<Enemy> enemies;
     public List<Hero> heroes;
+    public List<Transform> heroesStartingPositions;
     private Hero _currentHero;
     private bool _isActiveTurn = false;
 
