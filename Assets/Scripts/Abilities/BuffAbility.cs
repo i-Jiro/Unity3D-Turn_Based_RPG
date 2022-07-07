@@ -18,7 +18,5 @@ public class BuffAbility : Ability
             Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
         }
         // Do something with hero stats here
-        heroUser.UseMana(manaCost);
-
     }
 }

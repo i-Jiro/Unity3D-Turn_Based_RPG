@@ -68,7 +68,7 @@ public class Hero : MonoBehaviour
         if(isTurnTimerActive)
             TickTurnTimer();
     }
-    public virtual void ToggleTurnTimer(bool value)
+    public void ToggleTurnTimer(bool value)
     {
         isTurnTimerActive = !value;
     }
@@ -85,6 +85,7 @@ public class Hero : MonoBehaviour
         _animationHandler.PlaySpecialAttack();
         AttackAbility attackAbility = ability as AttackAbility;
         attackAbility.TriggerAbility(enemyTarget, this);
+        UseMana(ability.manaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(currentMana);
     }
@@ -100,6 +101,7 @@ public class Hero : MonoBehaviour
             Instantiate(ability.targetParticlePrefb, transform.position, ability.targetParticlePrefb.transform.rotation);
         }
         buffAbility.TriggerAbility(this);
+        UseMana(ability.manaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(currentMana);
     }
@@ -107,6 +109,9 @@ public class Hero : MonoBehaviour
     //For abilities that target party members
     public virtual void UseAbility(Hero hero, Ability ability)
     {
+        UseMana(ability.manaCost);
+        if (OnManaChanged != null)
+            OnManaChanged.Invoke(currentMana);
     }
 
     public virtual void Defend()
@@ -117,7 +122,7 @@ public class Hero : MonoBehaviour
         Debug.Log(gameObject.name + " defends.");
     }
 
-    public virtual void ResetDefence()
+    protected virtual void ResetDefence()
     {
         if (isDefending)
         {
@@ -138,7 +143,7 @@ public class Hero : MonoBehaviour
             OnHealthChanged.Invoke(currentHealth);
     }
 
-    public virtual void RegenerateMana()
+    protected virtual void RegenerateMana()
     {
         if (currentMana + manaRegenRate > maxMana)
             currentMana = maxMana;
@@ -148,13 +153,13 @@ public class Hero : MonoBehaviour
             OnManaChanged.Invoke(currentMana);
     }
 
-    public virtual void UseMana(float manaUsed)
+    protected virtual void UseMana(float manaUsed)
     {
         CurrentMana -= manaUsed;
     }
 
     //Charges character's turn meter based on it's speed.
-    public virtual void TickTurnTimer()
+    protected virtual void TickTurnTimer()
     {
         if (turnTimer < turnTimerMax)
         {
@@ -169,7 +174,7 @@ public class Hero : MonoBehaviour
         }
     }
 
-    public virtual void StartTurn()
+    protected virtual void StartTurn()
     {
         StartCoroutine(MoveLeft());
         _animationHandler.PlayMoveForward();
@@ -179,8 +184,7 @@ public class Hero : MonoBehaviour
         OnStartTurn.Invoke(this);
     }
 
-    //Called at the end of certain animations (attack, defend, abilities) by animations events.
-    public virtual void EndTurn()
+    protected virtual void EndTurn()
     {
         StartCoroutine(MoveRight());
         _animationHandler.PlayMoveBackward();
@@ -188,6 +192,8 @@ public class Hero : MonoBehaviour
         _animationHandler.PlayIdle();
         OnEndTurn.Invoke();
     }
+
+
 
     //Moves hero forward to show that it's ready to commands.
     private IEnumerator MoveLeft()

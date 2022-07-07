@@ -18,7 +18,6 @@ public class AttackAbility : Ability
             Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
         }
         enemyTarget.TakeDamage(baseMagnitude);
-        heroUser.UseMana(manaCost);
     }
 }
 
