@@ -26,7 +26,6 @@ public class Hero : MonoBehaviour
 
     [SerializeField] protected float MoveOffset = 3f;
     [SerializeField] protected float moveSpeed = 3f;
-    [SerializeField] protected float delaySeconds = 0.5f;
 
     public List<Ability> abilities;
 
@@ -59,7 +58,7 @@ public class Hero : MonoBehaviour
         isTurnTimerActive = true;
         if (FindObjectOfType<BattleManager>())
         {
-            BattleManager.OnActiveTurn += ToggleTurnTimer;
+            BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
         }
     }
 
@@ -187,13 +186,6 @@ public class Hero : MonoBehaviour
         _animationHandler.PlayMoveBackward();
         turnTimer = 0;
         _animationHandler.PlayIdle();
-        //Delay in Battle Manager instead?
-        StartCoroutine(WaitDelay(delaySeconds));
-    }
-
-    private IEnumerator WaitDelay(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
         OnEndTurn.Invoke();
     }
 

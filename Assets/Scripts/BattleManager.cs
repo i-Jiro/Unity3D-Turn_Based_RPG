@@ -13,9 +13,10 @@ public class BattleManager : MonoBehaviour
     private bool _isActiveTurn = false;
 
     private bool _isFightActive = false;
+    [SerializeField] float _turnDelaySeconds = 0.75f;
 
     public delegate void ActiveTurnEvent(bool value);
-    public static ActiveTurnEvent OnActiveTurn;
+    public static ActiveTurnEvent OnActiveTurnChanged;
 
     private void OnEnable()
     {
@@ -83,14 +84,14 @@ public class BattleManager : MonoBehaviour
     {
         _currentHero = hero;
         _isActiveTurn = true;
-        OnActiveTurn.Invoke(_isActiveTurn);
+        OnActiveTurnChanged.Invoke(_isActiveTurn);
         BattleUIHandler.Instance.ToggleActionMenu(true);
     }
 
     public void TakeActiveTurn(Enemy enemy)
     {
          _isActiveTurn = true;
-        OnActiveTurn.Invoke(_isActiveTurn);
+        OnActiveTurnChanged.Invoke(_isActiveTurn);
     }
 
     public Hero GetCurrentHero()
@@ -101,7 +102,14 @@ public class BattleManager : MonoBehaviour
     public void EndTurn()
     {
         _isActiveTurn = false;
-        OnActiveTurn(_isActiveTurn);
+        //Micro delay to allow for any remaining animations to finish.
+        StartCoroutine(EndTurnDelay(_turnDelaySeconds));
         BattleUIHandler.Instance.ToggleActionMenu(false);
+    }
+
+    private IEnumerator EndTurnDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        OnActiveTurnChanged.Invoke(_isActiveTurn);
     }
 }

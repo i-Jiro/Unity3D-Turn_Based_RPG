@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
         isTurnTimerActive = true;
         if (FindObjectOfType<BattleManager>())
         {
-            BattleManager.OnActiveTurn += ToggleTurnTimer;
+            BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
             heroes = BattleManager.Instance.heroes;
         }
     }
@@ -95,7 +95,7 @@ public class Enemy : MonoBehaviour
     {
         if (FindObjectOfType<BattleManager>())
         {
-            BattleManager.OnActiveTurn -= ToggleTurnTimer;
+            BattleManager.OnActiveTurnChanged -= ToggleTurnTimer;
         }
     }
 }
