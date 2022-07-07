@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Buff Ability", menuName = "Abilities/Buff Ability", order = 1)]
-public class BuffAbility : Ability
+[CreateAssetMenu(fileName = "New Support Ability", menuName = "Abilities/Support Ability", order = 1)]
+public class SupportAbility : AbilityData
 {
     //note to self: use enums to distringuish types of buffs?
-    public void TriggerAbility(Hero heroUser)
+    // rename class to SupportAbiility for clarity later
+    public void Trigger(Hero heroUser)
     {
         Debug.Log(heroUser.Name + " used " + AbilityName);
         if (targetParticlePrefb != null)

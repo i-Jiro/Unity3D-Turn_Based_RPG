@@ -11,28 +11,29 @@ public class Hero : MonoBehaviour
         get { return charName;}
         set { if(value.Length > 8) {Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI.");}}
      }
-    [SerializeField] protected float currentHealth = 100;
-    public float CurrentHealth { get { return currentHealth; } private set { CurrentHealth = value; } }
-    [SerializeField] protected float maxHealth = 100;
-    public float MaxHealth { get { return maxHealth; } private set { maxHealth = value; } }
+    [SerializeField] float _currentHealth = 100;
+    public float CurrentHealth { get { return _currentHealth; } private set { CurrentHealth = value; } }
+    [SerializeField] float _maxHealth = 100;
+    public float MaxHealth { get { return _maxHealth; } private set { _maxHealth = value; } }
     [SerializeField] protected float currentMana = 100;
     public float CurrentMana { get { return currentMana; } private set { currentMana = value; } }
     [SerializeField] protected  float maxMana = 100;
     public float MaxMana { get { return maxMana; } private set { currentMana = value; } }
-    [SerializeField] protected float manaRegenRate = 10;
-    [SerializeField] protected float defence = 10;
-    [SerializeField] protected float speed = 1;
-    [SerializeField] protected float defenseMultiplier = 2f;
+    [SerializeField] float _manaRegenRate = 10;
+    [SerializeField] float _defence = 10;
+    [SerializeField] float _speed = 1;
+    [SerializeField] float _defenseMultiplier = 2f;
 
-    [SerializeField] protected float MoveOffset = 3f;
-    [SerializeField] protected float moveSpeed = 3f;
+    [SerializeField] float _moveOffset = 3f;
+    [SerializeField] float _moveSpeed = 3f;
 
-    public List<Ability> abilities;
+    public List<AbilityData> abilities;
+    private Dictionary<StatusModifierData, StatusModifier> _statusModifiers;
 
-    protected float turnTimer = 0;
-    protected float turnTimerMax = 100;
-    protected bool isTurnTimerActive = false;
-    protected bool isDefending = false;
+    private float _turnTimer = 0;
+    private float _turnTimerMax = 100;
+    private bool _isTurnTimerActive = false;
+    private bool _isDefending = false;
 
     private HeroAnimationHandler _animationHandler;
 
@@ -55,7 +56,8 @@ public class Hero : MonoBehaviour
 
     private void Start()
     {
-        isTurnTimerActive = true;
+        _statusModifiers = new Dictionary<StatusModifierData, StatusModifier>();
+        _isTurnTimerActive = true;
         if (FindObjectOfType<BattleManager>())
         {
             BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
@@ -65,12 +67,12 @@ public class Hero : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isTurnTimerActive)
+        if(_isTurnTimerActive)
             TickTurnTimer();
     }
     public void ToggleTurnTimer(bool value)
     {
-        isTurnTimerActive = !value;
+        _isTurnTimerActive = !value;
     }
     public virtual void Attack(Enemy enemy)
     {
@@ -80,34 +82,34 @@ public class Hero : MonoBehaviour
     }
 
     //For abilities that target enemys
-    public virtual void UseAbility(Enemy enemyTarget, Ability ability)
+    public virtual void UseAbility(Enemy enemyTarget, AbilityData ability)
     {
         _animationHandler.PlaySpecialAttack();
         AttackAbility attackAbility = ability as AttackAbility;
-        attackAbility.TriggerAbility(enemyTarget, this);
+        attackAbility.Trigger(enemyTarget, this);
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(currentMana);
     }
 
     //For abilities that target self
-    public virtual void UseAbility(Ability ability)
+    public virtual void UseAbility(AbilityData ability)
     {
         Debug.Log(charName + " used " + ability.name);
         _animationHandler.PlayBuff();
-        BuffAbility buffAbility = ability as BuffAbility;
+        SupportAbility buffAbility = ability as SupportAbility;
         if (ability.targetParticlePrefb != null)
         {
             Instantiate(ability.targetParticlePrefb, transform.position, ability.targetParticlePrefb.transform.rotation);
         }
-        buffAbility.TriggerAbility(this);
+        buffAbility.Trigger(this);
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(currentMana);
     }
 
     //For abilities that target party members
-    public virtual void UseAbility(Hero hero, Ability ability)
+    public virtual void UseAbility(Hero hero, AbilityData ability)
     {
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
@@ -116,18 +118,18 @@ public class Hero : MonoBehaviour
 
     public virtual void Defend()
     {
-        isDefending = true;
-        defence *= defenseMultiplier;
+        _isDefending = true;
+        _defence *= _defenseMultiplier;
         _animationHandler.PlayDefend();
         Debug.Log(gameObject.name + " defends.");
     }
 
     protected virtual void ResetDefence()
     {
-        if (isDefending)
+        if (_isDefending)
         {
-            defence /= defenseMultiplier;
-            isDefending = false;
+            _defence /= _defenseMultiplier;
+            _isDefending = false;
             _animationHandler.StopDefend();
         }
     }
@@ -135,20 +137,20 @@ public class Hero : MonoBehaviour
     public virtual void TakeDamage(float rawDamage)
     {
         _animationHandler.PlayGetDamaged();
-        float damage = rawDamage - defence;
+        float damage = rawDamage - _defence;
         if (damage < 0)
             damage = 0;
-        currentHealth -= damage;
+        _currentHealth -= damage;
         if (OnHealthChanged != null)
-            OnHealthChanged.Invoke(currentHealth);
+            OnHealthChanged.Invoke(_currentHealth);
     }
 
     protected virtual void RegenerateMana()
     {
-        if (currentMana + manaRegenRate > maxMana)
+        if (currentMana + _manaRegenRate > maxMana)
             currentMana = maxMana;
         else
-            currentMana += manaRegenRate;
+            currentMana += _manaRegenRate;
         if (OnManaChanged != null)
             OnManaChanged.Invoke(currentMana);
     }
@@ -161,16 +163,41 @@ public class Hero : MonoBehaviour
     //Charges character's turn meter based on it's speed.
     protected virtual void TickTurnTimer()
     {
-        if (turnTimer < turnTimerMax)
+        if (_turnTimer < _turnTimerMax)
         {
-            turnTimer += Time.deltaTime * speed;
+            _turnTimer += Time.deltaTime * _speed;
             if (OnTurnTimeChanged != null)
-                OnTurnTimeChanged.Invoke(turnTimer);
+                OnTurnTimeChanged.Invoke(_turnTimer);
         }
-        else if (turnTimer > turnTimerMax)
+        else if (_turnTimer > _turnTimerMax)
         {
             StartTurn();
             Debug.Log(gameObject.name + " has reached it's turn.");
+        }
+    }
+
+    private void TickStatusModifier()
+    {
+        foreach(StatusModifier status in _statusModifiers.Values)
+        {
+            status.Tick();
+            if (status.isFinished)
+            {
+                _statusModifiers.Remove(status.modifierData);
+            }
+        }
+    }
+
+    public void AddModifier(StatusModifier statusMod)
+    {
+        if (_statusModifiers.ContainsKey(statusMod.modifierData))
+        {
+            _statusModifiers[statusMod.modifierData].Activate();
+        }
+        else
+        {
+            _statusModifiers.Add(statusMod.modifierData, statusMod);
+            _statusModifiers[statusMod.modifierData].Activate();
         }
     }
 
@@ -186,22 +213,26 @@ public class Hero : MonoBehaviour
 
     protected virtual void EndTurn()
     {
+        TickStatusModifier();
         StartCoroutine(MoveRight());
         _animationHandler.PlayMoveBackward();
-        turnTimer = 0;
+        _turnTimer = 0;
         _animationHandler.PlayIdle();
         OnEndTurn.Invoke();
     }
 
+    #region Modify Stats Methods
 
+    #endregion
 
+    #region IEnumerators
     //Moves hero forward to show that it's ready to commands.
     private IEnumerator MoveLeft()
     {
         float startingXpos = transform.position.x;
-        while(transform.position.x  > startingXpos - MoveOffset)
+        while(transform.position.x  > startingXpos - _moveOffset)
         {
-            transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
+            transform.Translate(Vector3.left * _moveSpeed * Time.deltaTime);
             yield return null;
         }
     }
@@ -210,13 +241,13 @@ public class Hero : MonoBehaviour
     private IEnumerator MoveRight()
     {
         float startingXpos = transform.position.x;
-        while (transform.position.x < startingXpos + MoveOffset)
+        while (transform.position.x < startingXpos + _moveOffset)
         {
-            transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
+            transform.Translate(Vector3.right * _moveSpeed * Time.deltaTime);
             yield return null;
         }
     }
-
+    #endregion
 
 
 }

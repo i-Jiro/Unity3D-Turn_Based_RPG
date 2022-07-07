@@ -4160,6 +4160,7 @@ MonoBehaviour:
   heroes:
   - {fileID: 235420623}
   heroesStartingPositions: []
+  _turnDelaySeconds: 0.75
 --- !u!4 &1825671062
 Transform:
   m_ObjectHideFlags: 0
@@ -5091,14 +5092,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MonsterCrow
       objectReference: {fileID: 0}
-    - target: {fileID: 1169946812716478653, guid: 1f8f0bd4c88312f4faceae97c9743cd4, type: 3}
-      propertyPath: _startPositionOffsetMax
-      value: 3.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1169946812716478653, guid: 1f8f0bd4c88312f4faceae97c9743cd4, type: 3}
-      propertyPath: _startPositionOffsetMin
-      value: 1.7
-      objectReference: {fileID: 0}
     - target: {fileID: 1169946812716478654, guid: 1f8f0bd4c88312f4faceae97c9743cd4, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -5293,6 +5286,10 @@ PrefabInstance:
       propertyPath: currentHealth
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: abilities.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 5a86a6a026849cd47bd68be576830e85, type: 2}
     - target: {fileID: 6183194970535629203, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: m_RootOrder
       value: 1

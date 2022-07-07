@@ -4,9 +4,9 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "New Attack Ability", menuName = "Abilities/Attack Ability", order = 1)]
-public class AttackAbility : Ability
+public class AttackAbility : AbilityData
 {
-    public void TriggerAbility(Enemy enemyTarget, Hero heroUser)
+    public void Trigger(Enemy enemyTarget, Hero heroUser)
     {
         Debug.Log(heroUser.Name + " used " + AbilityName + " on " + enemyTarget.gameObject.name);
         if (targetParticlePrefb != null)

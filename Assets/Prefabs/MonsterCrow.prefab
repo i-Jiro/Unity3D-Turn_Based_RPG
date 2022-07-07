@@ -124,7 +124,8 @@ MonoBehaviour:
   currentMana: 100
   defence: 10
   speed: 15
-  _startPositionOffset: 3
+  _startPositionOffsetMax: 3.5
+  _startPositionOffsetMin: 1.7
 --- !u!114 &1169946812716478649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,3 +140,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraTransform: {fileID: 0}
   material: {fileID: 2100000, guid: 7c79b5e77f8f3404397ba7126051258b, type: 2}
+  toggleShadows: 1

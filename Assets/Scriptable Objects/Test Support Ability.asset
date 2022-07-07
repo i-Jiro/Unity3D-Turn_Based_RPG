@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a8f6837b419cb947be5f218a1797f98, type: 3}
-  m_Name: Test Buff Ability
+  m_Script: {fileID: 11500000, guid: cb0f7a46afdad7a4bac1e1551d071983, type: 3}
+  m_Name: Test Support Ability
   m_EditorClassIdentifier: 
   AbilityName: Boost
-  baseMagnitude: 10
-  manaCost: 30
-  abilityType: 1
+  baseMagnitude: 1
+  manaCost: 50
   userParticlePrefab: {fileID: 0}
   targetParticlePrefb: {fileID: 0}

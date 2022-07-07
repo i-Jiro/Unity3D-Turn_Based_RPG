@@ -20,19 +20,20 @@ public class BattleUIHandler : MonoBehaviour
     [SerializeField] List<Button> _abilityButtons;
     [SerializeField] List<HeroUIController> _heroInfoControllers;
     [SerializeField] GameObject _selector;
-    [SerializeField] float _selectorOffset = 2f;
+    [SerializeField] float _selectorOffsetX = 2f;
+    [SerializeField] float _selectorOffsetZ = -1f;
 
     private bool _isSelectingEnemy = false;
     private bool _isSelectingAlly = false;
     private bool _isInAbilityMenu = false;
     private int _index;
-    private Ability _selectedAbility;
+    private AbilityData _selectedAbility;
     private UISoundHandler _soundHandler;
 
     public delegate void AttackSelectEnemyEvent(Enemy enemy);
     public static event AttackSelectEnemyEvent OnSelectEnemyAttack;
 
-    public delegate void AbilitySelectEnemyEvent(Enemy enemy, Ability ability);
+    public delegate void AbilitySelectEnemyEvent(Enemy enemy, AbilityData ability);
     public static event AbilitySelectEnemyEvent OnSelectEnemyAbility;
 
     private void Awake()
@@ -107,7 +108,7 @@ public class BattleUIHandler : MonoBehaviour
                 continue;
             }
 
-            Ability ability = currentHero.abilities[i];
+            AbilityData ability = currentHero.abilities[i];
             string abilityName = ability.AbilityName;
             float manaCost = ability.manaCost;
             _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
@@ -123,10 +124,10 @@ public class BattleUIHandler : MonoBehaviour
                 _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
                 Debug.Log(abilityName + "is an Attack Ability.");
             }
-            else if(ability.GetType() == typeof(BuffAbility))
+            else if(ability.GetType() == typeof(SupportAbility))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _abilitiesMenu.SetActive(false); });
-                Debug.Log(abilityName + " is a Buff Ability.");
+                Debug.Log(abilityName + " is a Support Ability.");
             }
             else
             {
@@ -147,11 +148,11 @@ public class BattleUIHandler : MonoBehaviour
         ToggleActionMenu(false);
         _selector.gameObject.SetActive(true);
         _isSelectingEnemy = true;
-        _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(_selectorOffset, 0, 0);
+        _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(_selectorOffsetX, 0, _selectorOffsetZ);
         _index = 0;
     }
     //Overload for abilities that require targeting enemies.
-    private void StartSelectEnemy(SelectorType type, Ability ability)
+    private void StartSelectEnemy(SelectorType type, AbilityData ability)
     {
         _abilitiesMenu.gameObject.SetActive(false);
         _selectedAbility = ability;
@@ -172,7 +173,7 @@ public class BattleUIHandler : MonoBehaviour
                 {
                     _index = 0;
                 }
-                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffset, 0, 0);
+                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffsetX, 0, _selectorOffsetZ);
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
@@ -182,7 +183,7 @@ public class BattleUIHandler : MonoBehaviour
                 {
                     _index = enemies.Count - 1;
                 }
-                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffset, 0 , 0);
+                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffsetX, 0 , _selectorOffsetZ);
             }
             else if (Input.GetKeyDown(KeyCode.Space)) //Confirm select current enemy to attack.
             {
