@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections.ObjectModel;
 
-[RequireComponent(typeof(HeroAnimationHandler))]
+[RequireComponent(typeof(HeroAnimationController))]
 public class Hero : MonoBehaviour
 {
     const float CHANCE_CAP = 1000f;
@@ -35,7 +35,7 @@ public class Hero : MonoBehaviour
     private bool _isTurnTimerActive = false;
     private bool _isDefending = false;
 
-    private HeroAnimationHandler _animationHandler;
+    private HeroAnimationController _animationController;
 
     public string Name
     {
@@ -67,7 +67,7 @@ public class Hero : MonoBehaviour
 
     private void Awake()
     {
-        _animationHandler = GetComponent<HeroAnimationHandler>();
+        _animationController = GetComponent<HeroAnimationController>();
     }
 
     private void Start()
@@ -94,7 +94,7 @@ public class Hero : MonoBehaviour
     }
     public virtual void Attack(Enemy enemy)
     {
-        _animationHandler.PlayAttack();
+        _animationController.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
         enemy.TakeDamage(CalculateDamage(_baseDamageMultiplier));
     }
@@ -118,7 +118,7 @@ public class Hero : MonoBehaviour
     //For abilities that target enemys
     public virtual void UseAbility(Enemy enemyTarget, AbilityData ability)
     {
-        _animationHandler.PlaySpecialAttack();
+        _animationController.PlaySpecialAttack();
         AttackAbility attackAbility = ability as AttackAbility;
         attackAbility.Trigger(enemyTarget, this);
         UseMana(ability.manaCost);
@@ -130,7 +130,7 @@ public class Hero : MonoBehaviour
     public virtual void UseAbility(AbilityData ability)
     {
         Debug.Log(charName + " used " + ability.name);
-        _animationHandler.PlayBuff();
+        _animationController.PlayBuff();
         SupportAbility buffAbility = ability as SupportAbility;
         if (ability.targetParticlePrefb != null)
         {
@@ -156,7 +156,7 @@ public class Hero : MonoBehaviour
     {
         _isDefending = true;
         _physicalDefenseStat.AddModifier(_defendStanceModifier);
-        _animationHandler.PlayDefend();
+        _animationController.PlayDefend();
         Debug.Log(gameObject.name + " defends.");
     }
 
@@ -166,7 +166,7 @@ public class Hero : MonoBehaviour
         {
             _physicalDefenseStat.RemoveModifier(_defendStanceModifier);
             _isDefending = false;
-            _animationHandler.StopDefend();
+            _animationController.StopDefend();
         }
     }
 
@@ -174,12 +174,12 @@ public class Hero : MonoBehaviour
     {
         if (Evade())
         {
-            _animationHandler.PlayEvade();
+            _animationController.PlayEvade();
             Debug.Log(gameObject.name + " Evaded.");
             return;
         }
 
-        _animationHandler.PlayGetDamaged();
+        _animationController.PlayGetDamaged();
         float damage = rawDamage - _physicalDefenseStat.Value;
         if (damage < 0)
             damage = 0;
@@ -258,8 +258,8 @@ public class Hero : MonoBehaviour
     protected virtual void StartTurn()
     {
         StartCoroutine(MoveLeft());
-        _animationHandler.PlayMoveForward();
-        _animationHandler.PlayReady();
+        _animationController.PlayMoveForward();
+        _animationController.PlayReady();
         RegenerateMana();
         ResetDefence();
         OnStartTurn.Invoke(this);
@@ -269,9 +269,9 @@ public class Hero : MonoBehaviour
     {
         TickStatusModifier();
         StartCoroutine(MoveRight());
-        _animationHandler.PlayMoveBackward();
+        _animationController.PlayMoveBackward();
         _turnTimer = 0;
-        _animationHandler.PlayIdle();
+        _animationController.PlayIdle();
         OnEndTurn.Invoke();
     }
 

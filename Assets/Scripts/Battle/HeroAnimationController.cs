@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Hero))]
-public class HeroAnimationHandler : MonoBehaviour
+public class HeroAnimationController : MonoBehaviour
 {
     private Animator _animator;
     public Animator Animator { get { return _animator; } private set { _animator = value; } }
