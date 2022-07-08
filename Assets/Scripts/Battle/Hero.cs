@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.ObjectModel;
 
 [RequireComponent(typeof(HeroAnimationController))]
+[RequireComponent(typeof(HeroAudioController))]
 public class Hero : MonoBehaviour
 {
     const float CHANCE_CAP = 1000f;
@@ -36,6 +37,7 @@ public class Hero : MonoBehaviour
     private bool _isDefending = false;
 
     private HeroAnimationController _animationController;
+    private HeroAudioController _audioController;
 
     public string Name
     {
@@ -68,6 +70,7 @@ public class Hero : MonoBehaviour
     private void Awake()
     {
         _animationController = GetComponent<HeroAnimationController>();
+        _audioController = GetComponent<HeroAudioController>();
     }
 
     private void Start()
@@ -94,6 +97,7 @@ public class Hero : MonoBehaviour
     }
     public virtual void Attack(Enemy enemy)
     {
+        _audioController.PlayAttackVoice();
         _animationController.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
         enemy.TakeDamage(CalculateDamage(_baseDamageMultiplier));
@@ -118,6 +122,7 @@ public class Hero : MonoBehaviour
     //For abilities that target enemys
     public virtual void UseAbility(Enemy enemyTarget, AbilityData ability)
     {
+        _audioController.PlaySpecialAttackVoice();
         _animationController.PlaySpecialAttack();
         AttackAbility attackAbility = ability as AttackAbility;
         attackAbility.Trigger(enemyTarget, this);
@@ -174,11 +179,14 @@ public class Hero : MonoBehaviour
     {
         if (Evade())
         {
+            _audioController.PlayEvadeVoice();
             _animationController.PlayEvade();
             Debug.Log(gameObject.name + " Evaded.");
             return;
         }
 
+        if (_isDefending) { _audioController.PlayGuardVoice(); }
+        else { _audioController.PlayHurtVoice(); }
         _animationController.PlayGetDamaged();
         float damage = rawDamage - _physicalDefenseStat.Value;
         if (damage < 0)
@@ -258,6 +266,7 @@ public class Hero : MonoBehaviour
     protected virtual void StartTurn()
     {
         StartCoroutine(MoveLeft());
+        _audioController.PlayStartTurnVoice();
         _animationController.PlayMoveForward();
         _animationController.PlayReady();
         RegenerateMana();
