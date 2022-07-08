@@ -9,7 +9,7 @@ public class Hero : MonoBehaviour
      public string Name
      {
         get { return charName;}
-        set { if(value.Length > 8) {Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI.");}}
+        set { if(value.Length > 49) {Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI.");}}
      }
 
     public float CurrentHealth { get { return _currentHealth; } }
