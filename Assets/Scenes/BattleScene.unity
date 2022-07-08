@@ -1870,7 +1870,8 @@ MonoBehaviour:
   - {fileID: 1857817372}
   - {fileID: 178291295}
   _selector: {fileID: 70654620}
-  _selectorOffset: 2.5
+  _selectorOffsetX: 2
+  _selectorOffsetZ: -1
 --- !u!114 &791753246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5275,8 +5276,20 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _speed
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: maxHealth
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _moveSpeed
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _moveOffset
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: delaySeconds
@@ -5287,9 +5300,37 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _speedStat.baseValue
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _evasionStat.baseValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _maxManaStat.baseValue
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _criticalStat.baseValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: abilities.Array.data[1]
       value: 
       objectReference: {fileID: 11400000, guid: 5a86a6a026849cd47bd68be576830e85, type: 2}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _maxHealthStat.baseValue
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _physicalAttackStat.baseValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _physicalDefenseStat.baseValue
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629203, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: m_RootOrder
       value: 1

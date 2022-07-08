@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Collections.ObjectModel;
+using UnityEngine;
 
+[System.Serializable]
 public class CharacterStat 
 {
     public float baseValue;
     private float _LastBaseValue = float.MinValue;
-    private bool _isDirty;
+    private bool _isDirty = true;
     private readonly List<StatModifier> _statModifiers;
     public readonly ReadOnlyCollection<StatModifier> StatModifiers;
+    [SerializeField]
     private float _value;
     public float Value
     {
@@ -19,17 +22,20 @@ public class CharacterStat
             {
                 _value = CalculateFinalValue();
             }
-            return Value;
+            return _value;
         }
 
     }
 
-    public CharacterStat(float baseValue)
+    public CharacterStat()
     {
-        _isDirty = true;
-        this.baseValue = baseValue;
         _statModifiers = new List<StatModifier>();
         StatModifiers = _statModifiers.AsReadOnly();
+    }
+
+    public CharacterStat(float baseValue) : this()
+    {
+        this.baseValue = baseValue;
     }
 
     public void AddModifier(StatModifier mod)
@@ -64,6 +70,7 @@ public class CharacterStat
         return didRemove;
     }
 
+    //Comparison method for .sort()
     private int CompareModifierOrder(StatModifier a, StatModifier b)
     {
         if(a.order < b.order)
@@ -91,7 +98,7 @@ public class CharacterStat
             else if(_statModifiers[i].type == StatModifierType.PercentAdd)
             {
                 sumPercentAdd += _statModifiers[i].value;
-                if(_statModifiers.Count < i + 1 || _statModifiers[i+1].type != StatModifierType.PercentAdd)
+                if(_statModifiers.Count - 1 < i + 1 || _statModifiers[i+1].type != StatModifierType.PercentAdd)
                 {
                     finalValue *= 1 + sumPercentAdd;
                     sumPercentAdd = 0;

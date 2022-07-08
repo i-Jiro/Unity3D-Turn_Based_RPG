@@ -11,18 +11,25 @@ public class Hero : MonoBehaviour
         get { return charName;}
         set { if(value.Length > 8) {Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI.");}}
      }
+
+    public float CurrentHealth { get { return _currentHealth; } }
+    public float CurrentMana { get { return _currentMana; } }
+    public float MaxHealth { get { return _maxHealthStat.Value; } }
+    public float MaxMana { get { return _maxManaStat.Value; } }
+
     [SerializeField] float _currentHealth = 100;
-    public float CurrentHealth { get { return _currentHealth; } private set { CurrentHealth = value; } }
-    [SerializeField] float _maxHealth = 100;
-    public float MaxHealth { get { return _maxHealth; } private set { _maxHealth = value; } }
-    [SerializeField] protected float currentMana = 100;
-    public float CurrentMana { get { return currentMana; } private set { currentMana = value; } }
-    [SerializeField] protected  float maxMana = 100;
-    public float MaxMana { get { return maxMana; } private set { currentMana = value; } }
+    [SerializeField] protected float _currentMana = 100;
     [SerializeField] float _manaRegenRate = 10;
-    [SerializeField] float _defence = 10;
-    [SerializeField] float _speed = 1;
-    [SerializeField] float _defenseMultiplier = 2f;
+
+    [SerializeField] CharacterStat _maxHealthStat;
+    [SerializeField] CharacterStat _maxManaStat;
+    [SerializeField] CharacterStat _physicalAttackStat;
+    [SerializeField] CharacterStat _physicalDefenseStat;
+    [SerializeField] CharacterStat _speedStat;
+    [SerializeField] CharacterStat _criticalStat;
+    [SerializeField] CharacterStat _evasionStat;
+
+    private StatModifier _defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
 
     [SerializeField] float _moveOffset = 3f;
     [SerializeField] float _moveSpeed = 3f;
@@ -56,6 +63,8 @@ public class Hero : MonoBehaviour
 
     private void Start()
     {
+        _currentHealth = _maxHealthStat.Value;
+        _currentMana = _maxManaStat.Value;
         _statusModifiers = new Dictionary<StatusModifierData, StatusModifier>();
         _isTurnTimerActive = true;
         if (FindObjectOfType<BattleManager>())
@@ -78,7 +87,7 @@ public class Hero : MonoBehaviour
     {
         _animationHandler.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
-        enemy.TakeDamage(10); //placeholder damage
+        enemy.TakeDamage(_physicalAttackStat.Value); //placeholder damage
     }
 
     //For abilities that target enemys
@@ -89,7 +98,7 @@ public class Hero : MonoBehaviour
         attackAbility.Trigger(enemyTarget, this);
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
-            OnManaChanged.Invoke(currentMana);
+            OnManaChanged.Invoke(_currentMana);
     }
 
     //For abilities that target self
@@ -102,10 +111,12 @@ public class Hero : MonoBehaviour
         {
             Instantiate(ability.targetParticlePrefb, transform.position, ability.targetParticlePrefb.transform.rotation);
         }
+        StatModifier speedModifier = new StatModifier(1, StatModifierType.PercentAdd);
+        _speedStat.AddModifier(speedModifier);
         buffAbility.Trigger(this);
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
-            OnManaChanged.Invoke(currentMana);
+            OnManaChanged.Invoke(_currentMana);
     }
 
     //For abilities that target party members
@@ -113,13 +124,13 @@ public class Hero : MonoBehaviour
     {
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
-            OnManaChanged.Invoke(currentMana);
+            OnManaChanged.Invoke(_currentMana);
     }
 
     public virtual void Defend()
     {
         _isDefending = true;
-        _defence *= _defenseMultiplier;
+        _physicalDefenseStat.AddModifier(_defendStanceModifier);
         _animationHandler.PlayDefend();
         Debug.Log(gameObject.name + " defends.");
     }
@@ -128,7 +139,7 @@ public class Hero : MonoBehaviour
     {
         if (_isDefending)
         {
-            _defence /= _defenseMultiplier;
+            _physicalDefenseStat.RemoveModifier(_defendStanceModifier);
             _isDefending = false;
             _animationHandler.StopDefend();
         }
@@ -137,7 +148,7 @@ public class Hero : MonoBehaviour
     public virtual void TakeDamage(float rawDamage)
     {
         _animationHandler.PlayGetDamaged();
-        float damage = rawDamage - _defence;
+        float damage = rawDamage - _physicalDefenseStat.Value;
         if (damage < 0)
             damage = 0;
         _currentHealth -= damage;
@@ -147,17 +158,17 @@ public class Hero : MonoBehaviour
 
     protected virtual void RegenerateMana()
     {
-        if (currentMana + _manaRegenRate > maxMana)
-            currentMana = maxMana;
+        if (_currentMana + _manaRegenRate > _maxManaStat.Value)
+            _currentMana = _maxManaStat.Value;
         else
-            currentMana += _manaRegenRate;
+            _currentMana += _manaRegenRate;
         if (OnManaChanged != null)
-            OnManaChanged.Invoke(currentMana);
+            OnManaChanged.Invoke(_currentMana);
     }
 
     protected virtual void UseMana(float manaUsed)
     {
-        CurrentMana -= manaUsed;
+        _currentMana -= manaUsed;
     }
 
     //Charges character's turn meter based on it's speed.
@@ -165,7 +176,7 @@ public class Hero : MonoBehaviour
     {
         if (_turnTimer < _turnTimerMax)
         {
-            _turnTimer += Time.deltaTime * _speed;
+            _turnTimer += Time.deltaTime * _speedStat.Value;
             if (OnTurnTimeChanged != null)
                 OnTurnTimeChanged.Invoke(_turnTimer);
         }
@@ -220,10 +231,6 @@ public class Hero : MonoBehaviour
         _animationHandler.PlayIdle();
         OnEndTurn.Invoke();
     }
-
-    #region Modify Stats Methods
-
-    #endregion
 
     #region IEnumerators
     //Moves hero forward to show that it's ready to commands.
