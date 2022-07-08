@@ -87,7 +87,23 @@ public class Hero : MonoBehaviour
     {
         _animationHandler.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
-        enemy.TakeDamage(_physicalAttackStat.Value); //placeholder damage
+        enemy.TakeDamage(CalculateDamage(1.0f));
+    }
+
+    private float CalculateDamage(float damageMultiplier)
+    {
+        float finalDamage = _physicalAttackStat.Value * damageMultiplier;
+        float critChance = _criticalStat.Value;
+        float randValue = Random.value;
+        if (critChance > 1000) { critChance = 1000; }
+        critChance /= 1000;
+        if(randValue < 1 - critChance)
+        {
+            float critMultiplier = 1.25f;
+            finalDamage *= critMultiplier;
+            Debug.Log("Critical hit.");
+        }
+        return Mathf.Round(Random.Range(finalDamage, (finalDamage * 1.01f)));
     }
 
     //For abilities that target enemys
