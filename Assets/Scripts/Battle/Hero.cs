@@ -28,6 +28,9 @@ public class Hero : MonoBehaviour
     [SerializeField] CharacterStat _speedStat;
     [SerializeField] CharacterStat _criticalStat;
     [SerializeField] CharacterStat _evasionStat;
+    const float CHANCE_CAP = 1000f;
+
+    [SerializeField] float _baseDamageMultipler = 1.0f;
 
     private StatModifier _defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
 
@@ -87,7 +90,7 @@ public class Hero : MonoBehaviour
     {
         _animationHandler.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
-        enemy.TakeDamage(CalculateDamage(1.0f));
+        enemy.TakeDamage(CalculateDamage(_baseDamageMultipler));
     }
 
     private float CalculateDamage(float damageMultiplier)
@@ -95,8 +98,8 @@ public class Hero : MonoBehaviour
         float finalDamage = _physicalAttackStat.Value * damageMultiplier;
         float critChance = _criticalStat.Value;
         float randValue = Random.value;
-        if (critChance > 1000) { critChance = 1000; }
-        critChance /= 1000;
+        if (critChance > CHANCE_CAP) { critChance = CHANCE_CAP; }
+        critChance /= CHANCE_CAP;
         if(randValue < 1 - critChance)
         {
             float critMultiplier = 1.25f;
@@ -163,6 +166,13 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeDamage(float rawDamage)
     {
+        if (Evade())
+        {
+            _animationHandler.PlayEvade();
+            Debug.Log(gameObject.name + " Evaded.");
+            return;
+        }
+
         _animationHandler.PlayGetDamaged();
         float damage = rawDamage - _physicalDefenseStat.Value;
         if (damage < 0)
@@ -170,6 +180,17 @@ public class Hero : MonoBehaviour
         _currentHealth -= damage;
         if (OnHealthChanged != null)
             OnHealthChanged.Invoke(_currentHealth);
+    }
+
+    private bool Evade()
+    {
+        bool didEvade = false;
+        float evasionChance = _evasionStat.Value;
+        float randValue = Random.value;
+        if(evasionChance > CHANCE_CAP) { evasionChance = CHANCE_CAP; }
+        evasionChance /= CHANCE_CAP;
+        if(randValue < evasionChance) { didEvade = true; }
+        return didEvade;
     }
 
     protected virtual void RegenerateMana()

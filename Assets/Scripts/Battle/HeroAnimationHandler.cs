@@ -63,6 +63,11 @@ public class HeroAnimationHandler : MonoBehaviour
         _animator.SetTrigger("MoveBackward");
     }
 
+    public void PlayEvade()
+    {
+        _animator.SetTrigger("EvadeTrigger");
+    }
+
     public void PlayWin()
     {
 
