@@ -159,6 +159,7 @@ public class Hero : MonoBehaviour
 
     public virtual void Defend()
     {
+        _audioController.PlayStartGuardVoice();
         _isDefending = true;
         _physicalDefenseStat.AddModifier(_defendStanceModifier);
         _animationController.PlayDefend();
@@ -285,7 +286,7 @@ public class Hero : MonoBehaviour
     }
 
     #region IEnumerators
-    //Moves hero forward to show that it's ready to commands.
+    //Moves hero forward to show that it's ready for commands.
     private IEnumerator MoveLeft()
     {
         float startingXpos = transform.position.x;

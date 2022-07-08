@@ -5285,7 +5285,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _attackVoiceClips.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _hurtVoiceClips.Array.data[0]
@@ -5328,6 +5328,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _startGuardVoiceClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _startTurnVoiceClips.Array.data[0]
       value: 
       objectReference: {fileID: 8300000, guid: 04e9fdc35fb093c47b27162fa5cef413, type: 3}
@@ -5340,9 +5344,13 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _startGuardVoiceClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 748ed4776a16bd143b82c135f01f1521, type: 3}
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _specialAttackVoiceClips.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 179f6acd7af898a43aed41290ba79cde, type: 3}
+      objectReference: {fileID: 8300000, guid: b5ad400922e0e3845bd4e287ab336fb1, type: 3}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: speed
       value: 25

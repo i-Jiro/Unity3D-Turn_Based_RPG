@@ -12,6 +12,8 @@ public class HeroAudioController : MonoBehaviour
     [SerializeField] List<AudioClip> _startTurnVoiceClips;
     [SerializeField] List<AudioClip> _evadeVoiceClips;
     [SerializeField] List<AudioClip> _guardVoiceClips;
+    [SerializeField] List<AudioClip> _startGuardVoiceClips;
+    [SerializeField] List<AudioClip> _selfBuffVoiceClips;
 
 
     private void Awake()
@@ -53,11 +55,24 @@ public class HeroAudioController : MonoBehaviour
         int index = Random.Range(0, _evadeVoiceClips.Count);
         _audioSource.PlayOneShot(_evadeVoiceClips[index]);
     }
+    public void PlayStartGuardVoice()
+    {
+        _audioSource.Stop();
+        int index = Random.Range(0, _startGuardVoiceClips.Count);
+        _audioSource.PlayOneShot(_startGuardVoiceClips[index]);
+    }
+
     public void PlayGuardVoice()
     {
         _audioSource.Stop();
-        int index = Random.Range(0, _evadeVoiceClips.Count);
-        _audioSource.PlayOneShot(_evadeVoiceClips[index]);
+        int index = Random.Range(0, _guardVoiceClips.Count);
+        _audioSource.PlayOneShot(_guardVoiceClips[index]);
+    }
+    public void PlaySelfBuffVoice()
+    {
+        _audioSource.Stop();
+        int index = Random.Range(0, _selfBuffVoiceClips.Count);
+        _audioSource.PlayOneShot(_selfBuffVoiceClips[index]);
     }
 
 }
