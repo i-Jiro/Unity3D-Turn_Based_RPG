@@ -1,21 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.ObjectModel;
 
 [RequireComponent(typeof(HeroAnimationHandler))]
 public class Hero : MonoBehaviour
 {
-    [SerializeField] protected string charName = "";
-     public string Name
-     {
-        get { return charName;}
-        set { if(value.Length > 49) {Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI.");}}
-     }
+    const float CHANCE_CAP = 1000f;
 
-    public float CurrentHealth { get { return _currentHealth; } }
-    public float CurrentMana { get { return _currentMana; } }
-    public float MaxHealth { get { return _maxHealthStat.Value; } }
-    public float MaxMana { get { return _maxManaStat.Value; } }
+    [SerializeField] protected string charName = "";
 
     [SerializeField] float _currentHealth = 100;
     [SerializeField] protected float _currentMana = 100;
@@ -28,24 +21,31 @@ public class Hero : MonoBehaviour
     [SerializeField] CharacterStat _speedStat;
     [SerializeField] CharacterStat _criticalStat;
     [SerializeField] CharacterStat _evasionStat;
-    const float CHANCE_CAP = 1000f;
 
-    [SerializeField] float _baseDamageMultipler = 1.0f;
-
-    private StatModifier _defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
-
+    [SerializeField] float _baseDamageMultiplier = 1.0f;
     [SerializeField] float _moveOffset = 3f;
     [SerializeField] float _moveSpeed = 3f;
 
-    public List<AbilityData> abilities;
+    [SerializeField] List<AbilityData> _abilities;
+    public readonly ReadOnlyCollection<AbilityData> Abilities;
     private Dictionary<StatusModifierData, StatusModifier> _statusModifiers;
-
+    private StatModifier _defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
     private float _turnTimer = 0;
     private float _turnTimerMax = 100;
     private bool _isTurnTimerActive = false;
     private bool _isDefending = false;
 
     private HeroAnimationHandler _animationHandler;
+
+    public string Name
+    {
+        get { return charName; }
+        set { if (value.Length > 49) { Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI."); } }
+    }
+    public float CurrentHealth { get { return _currentHealth; } }
+    public float CurrentMana { get { return _currentMana; } }
+    public float MaxHealth { get { return _maxHealthStat.Value; } }
+    public float MaxMana { get { return _maxManaStat.Value; } }
 
     public delegate void HealthEventHandler(float health);
     public event HealthEventHandler OnHealthChanged;
@@ -58,6 +58,12 @@ public class Hero : MonoBehaviour
     public event EventTakeTurn OnStartTurn;
     public delegate void EventEndTurn();
     public event EventEndTurn OnEndTurn;
+
+    public Hero()
+    {
+        _abilities = new List<AbilityData>();
+        Abilities = _abilities.AsReadOnly();
+    }
 
     private void Awake()
     {
@@ -90,7 +96,7 @@ public class Hero : MonoBehaviour
     {
         _animationHandler.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
-        enemy.TakeDamage(CalculateDamage(_baseDamageMultipler));
+        enemy.TakeDamage(CalculateDamage(_baseDamageMultiplier));
     }
 
     private float CalculateDamage(float damageMultiplier)

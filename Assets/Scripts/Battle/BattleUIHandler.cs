@@ -102,13 +102,13 @@ public class BattleUIHandler : MonoBehaviour
         for(int i = 0; i < _abilityButtons.Count; i++)
         {
             //Buttons that are not assigned an ability are hidden.
-            if(i >= currentHero.abilities.Count)
+            if(i >= currentHero.Abilities.Count)
             {
                 _abilityButtons[i].gameObject.SetActive(false);
                 continue;
             }
 
-            AbilityData ability = currentHero.abilities[i];
+            AbilityData ability = currentHero.Abilities[i];
             string abilityName = ability.AbilityName;
             float manaCost = ability.manaCost;
             _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
