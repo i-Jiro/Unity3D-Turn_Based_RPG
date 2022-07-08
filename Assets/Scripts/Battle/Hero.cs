@@ -177,7 +177,7 @@ public class Hero : MonoBehaviour
 
     public virtual void TakeDamage(float rawDamage)
     {
-        if (Evade())
+        if (Evade() && !_isDefending)
         {
             _audioController.PlayEvadeVoice();
             _animationController.PlayEvade();
