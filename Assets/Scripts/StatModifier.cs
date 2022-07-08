@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum StatModifierType { Flat, PercentAdd, PercentMultiply}
+public enum StatModifierType { Flat = 100, PercentAdd = 200, PercentMultiply = 300}
 
 public class StatModifier
 {
@@ -13,6 +13,7 @@ public class StatModifier
     public StatModifier(float value, StatModifierType type, int order, object source)
     {
         this.value = value;
+        this.type = type;
         this.order = order;
         this.source = source;
     }

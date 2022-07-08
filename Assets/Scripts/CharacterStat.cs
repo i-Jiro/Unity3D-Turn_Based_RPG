@@ -1,20 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Collections.ObjectModel;
 
 public class CharacterStat 
 {
     public float baseValue;
+    private float _LastBaseValue = float.MinValue;
     private bool _isDirty;
     private readonly List<StatModifier> _statModifiers;
+    public readonly ReadOnlyCollection<StatModifier> StatModifiers;
     private float _value;
     public float Value
     {
         get 
         { 
-            if (_isDirty)
+            if (_isDirty || _LastBaseValue != baseValue)
             {
-                _value = CaculateFinalValue();
+                _value = CalculateFinalValue();
             }
             return Value;
         }
@@ -26,6 +29,7 @@ public class CharacterStat
         _isDirty = true;
         this.baseValue = baseValue;
         _statModifiers = new List<StatModifier>();
+        StatModifiers = _statModifiers.AsReadOnly();
     }
 
     public void AddModifier(StatModifier mod)
@@ -37,8 +41,27 @@ public class CharacterStat
 
     public bool RemoveModifier(StatModifier mod)
     {
-        _isDirty = true;
-        return _statModifiers.Remove(mod);
+        if (_statModifiers.Remove(mod))
+        {
+            _isDirty = true;
+            return true;
+        }
+        return false;
+    }
+
+    public bool RemoveAllModifierFromSource(object source)
+    {
+        bool didRemove = false;
+        for(int i = _statModifiers.Count - 1; i >= 0; i--)
+        {
+            if(_statModifiers[i].source == source)
+            {
+                _isDirty = true;
+                didRemove = true;
+                _statModifiers.RemoveAt(i);
+            }
+        }
+        return didRemove;
     }
 
     private int CompareModifierOrder(StatModifier a, StatModifier b)
@@ -55,7 +78,7 @@ public class CharacterStat
         return 0;
     }
 
-    private float CaculateFinalValue()
+    private float CalculateFinalValue()
     {
         float finalValue = baseValue;
         float sumPercentAdd = 0;
