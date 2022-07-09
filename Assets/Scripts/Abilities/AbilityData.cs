@@ -8,5 +8,6 @@ public abstract class AbilityData : ScriptableObject
     public int baseMagnitude = 1;
     public int manaCost = 1;
     public GameObject userParticlePrefab;
-    public GameObject targetParticlePrefb;
+    public GameObject targetParticlePrefab;
+    public List<StatusEffectData> statusEffectDataList;
 }

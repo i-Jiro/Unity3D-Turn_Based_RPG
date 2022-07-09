@@ -119,12 +119,12 @@ public class BattleUIHandler : MonoBehaviour
             }
 
             //Sort out abilities into buttons based on their ability script subclass type.
-            if (ability.GetType() == typeof(AttackAbility))
+            if (ability.GetType() == typeof(AttackAbilityData))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
                 Debug.Log(abilityName + "is an Attack Ability.");
             }
-            else if(ability.GetType() == typeof(SupportAbility))
+            else if(ability.GetType() == typeof(SupportAbilityData))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _abilitiesMenu.SetActive(false); });
                 Debug.Log(abilityName + " is a Support Ability.");

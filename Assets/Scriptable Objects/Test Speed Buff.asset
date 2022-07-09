@@ -16,3 +16,5 @@ MonoBehaviour:
   turnDuration: 1
   isEffectStackable: 1
   isDurationStackable: 1
+  ModifierValue: 1
+  ModifierType: 300

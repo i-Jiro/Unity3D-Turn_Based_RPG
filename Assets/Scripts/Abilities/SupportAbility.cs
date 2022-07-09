@@ -2,22 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Support Ability", menuName = "Abilities/Support Ability", order = 1)]
-public class SupportAbility : AbilityData
+public class SupportAbility : Ability, ISelfTargetable
 {
-    public StatusEffectData statusEffect;
-    public void Trigger(Hero heroUser)
-    {
-        Debug.Log(heroUser.Name + " used " + AbilityName);
-        if (targetParticlePrefb != null)
-        {
-            Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
-        }
-        if (userParticlePrefab != null)
-        {
-            Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
-        }
+    public SupportAbility(AbilityData data, GameObject source, List<StatusEffectData> statusEffectDataList) : base (data,source,statusEffectDataList) { }
 
-        heroUser.AddStatusEffect(statusEffect.Initialize(heroUser.gameObject));
+    public void Trigger(Hero hero)
+    {
+        SupportAbilityData data = abilityData as SupportAbilityData;
+        data.Trigger(hero);
+        foreach(StatusEffect status in statusEffects)
+        {
+            hero.AddStatusEffect(status);
+        }
     }
 }

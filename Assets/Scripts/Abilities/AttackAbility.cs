@@ -2,22 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-[CreateAssetMenu(fileName = "New Attack Ability", menuName = "Abilities/Attack Ability", order = 1)]
-public class AttackAbility : AbilityData
+public class AttackAbility : Ability, IEnemyTargetable
 {
-    public void Trigger(Enemy enemyTarget, Hero heroUser)
+    public AttackAbility(AbilityData data, GameObject source, List<StatusEffectData> statusEffectDataList) : base(data, source, statusEffectDataList) { }
+    public void Trigger(Hero heroUser, Enemy enemyTarget)
     {
-        Debug.Log(heroUser.Name + " used " + AbilityName + " on " + enemyTarget.gameObject.name);
-        if (targetParticlePrefb != null)
+        AttackAbilityData data = abilityData as AttackAbilityData;
+        data.Trigger(heroUser, enemyTarget);
+        foreach(StatusEffect status in statusEffects)
         {
-            Instantiate(targetParticlePrefb, enemyTarget.transform.position, targetParticlePrefb.transform.rotation);
+            heroUser.AddStatusEffect(status);
         }
-        if (userParticlePrefab != null)
-        {
-            Instantiate(userParticlePrefab, heroUser.transform.position, userParticlePrefab.transform.rotation);
-        }
-        enemyTarget.TakeDamage(baseMagnitude);
     }
 }
-
