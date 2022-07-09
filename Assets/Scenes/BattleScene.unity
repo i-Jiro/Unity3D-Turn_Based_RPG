@@ -5316,6 +5316,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 34036824918a7bf4fa899de5759f5d3a, type: 3}
     - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _selfBuffVoiceClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _attackVoiceClips.Array.data[0]
       value: 
       objectReference: {fileID: 8300000, guid: 74e488b813b1af541a1a33bf1c6417dd, type: 3}
@@ -5331,6 +5335,10 @@ PrefabInstance:
       propertyPath: _startGuardVoiceClips.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _selfBuffVoiceClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 179f6acd7af898a43aed41290ba79cde, type: 3}
     - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _startTurnVoiceClips.Array.data[0]
       value: 
@@ -5372,6 +5380,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _currentMana
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: delaySeconds
       value: 0.75
       objectReference: {fileID: 0}
@@ -5393,7 +5405,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _maxManaStat.baseValue
-      value: 100
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _criticalStat.baseValue

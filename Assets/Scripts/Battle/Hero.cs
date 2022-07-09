@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 [RequireComponent(typeof(HeroAnimationController))]
 [RequireComponent(typeof(HeroAudioController))]
@@ -29,7 +30,7 @@ public class Hero : MonoBehaviour
 
     [SerializeField] List<AbilityData> _abilities;
     public readonly ReadOnlyCollection<AbilityData> Abilities;
-    private Dictionary<StatusModifierData, StatusModifier> _statusModifiers;
+    private Dictionary<StatusEffectData, StatusEffect> _statusEffects;
     private StatModifier _defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
     private float _turnTimer = 0;
     private float _turnTimerMax = 100;
@@ -71,13 +72,13 @@ public class Hero : MonoBehaviour
     {
         _animationController = GetComponent<HeroAnimationController>();
         _audioController = GetComponent<HeroAudioController>();
+        _statusEffects = new Dictionary<StatusEffectData, StatusEffect>();
     }
 
     private void Start()
     {
         _currentHealth = _maxHealthStat.Value;
         _currentMana = _maxManaStat.Value;
-        _statusModifiers = new Dictionary<StatusModifierData, StatusModifier>();
         _isTurnTimerActive = true;
         if (FindObjectOfType<BattleManager>())
         {
@@ -114,7 +115,6 @@ public class Hero : MonoBehaviour
         {
             float critMultiplier = 1.25f;
             finalDamage *= critMultiplier;
-            Debug.Log("Critical hit.");
         }
         return Mathf.Round(Random.Range(finalDamage, (finalDamage * 1.01f)));
     }
@@ -135,14 +135,13 @@ public class Hero : MonoBehaviour
     public virtual void UseAbility(AbilityData ability)
     {
         Debug.Log(charName + " used " + ability.name);
+        _audioController.PlaySelfBuffVoice();
         _animationController.PlayBuff();
         SupportAbility buffAbility = ability as SupportAbility;
         if (ability.targetParticlePrefb != null)
         {
             Instantiate(ability.targetParticlePrefb, transform.position, ability.targetParticlePrefb.transform.rotation);
         }
-        StatModifier speedModifier = new StatModifier(1, StatModifierType.PercentAdd);
-        _speedStat.AddModifier(speedModifier);
         buffAbility.Trigger(this);
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
@@ -239,29 +238,42 @@ public class Hero : MonoBehaviour
         }
     }
 
-    private void TickStatusModifier()
+ 
+    private void TickStatusEffects()
     {
-        foreach(StatusModifier status in _statusModifiers.Values)
+        foreach(StatusEffect status in _statusEffects.Values.ToList()) //creates copy into a list to iterate with. Avoids error if iterating and operating in oringal dict.
         {
             status.Tick();
             if (status.isFinished)
             {
-                _statusModifiers.Remove(status.modifierData);
+                _statusEffects.Remove(status.Data);
             }
         }
     }
 
-    public void AddModifier(StatusModifier statusMod)
+    public void AddStatusEffect(StatusEffect statusEffect)
     {
-        if (_statusModifiers.ContainsKey(statusMod.modifierData))
+        Debug.Log("Status effect added: " + statusEffect.Data.Name);
+        if (_statusEffects.ContainsKey(statusEffect.Data))
         {
-            _statusModifiers[statusMod.modifierData].Activate();
+            _statusEffects[statusEffect.Data].Start();
         }
         else
         {
-            _statusModifiers.Add(statusMod.modifierData, statusMod);
-            _statusModifiers[statusMod.modifierData].Activate();
+            _statusEffects.Add(statusEffect.Data, statusEffect);
+            _statusEffects[statusEffect.Data].Start();
         }
+    }
+
+
+    public void AddModifier(StatModifier statMod)
+    {
+        _speedStat.AddModifier(statMod);
+    }
+
+    public void RemoveModifier(StatModifier statMod)
+    {
+        _speedStat.RemoveModifier(statMod);
     }
 
     protected virtual void StartTurn()
@@ -277,7 +289,7 @@ public class Hero : MonoBehaviour
 
     protected virtual void EndTurn()
     {
-        TickStatusModifier();
+        TickStatusEffects();
         StartCoroutine(MoveRight());
         _animationController.PlayMoveBackward();
         _turnTimer = 0;

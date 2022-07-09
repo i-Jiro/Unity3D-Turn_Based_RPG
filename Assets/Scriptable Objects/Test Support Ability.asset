@@ -17,3 +17,4 @@ MonoBehaviour:
   manaCost: 50
   userParticlePrefab: {fileID: 0}
   targetParticlePrefb: {fileID: 0}
+  statusEffect: {fileID: 11400000, guid: 8eb745b54de74f7498bf711748ed408e, type: 2}
