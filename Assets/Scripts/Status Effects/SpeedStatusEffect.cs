@@ -19,10 +19,7 @@ public class SpeedStatusEffect : StatusEffect
     public override void End()
     {
         SpeedStatusEffectData speedStatusEffect = Data as SpeedStatusEffectData;
-        for(int i = 0; i < _effectStacks; i++)
-        {
-            _hero.RemoveModifier(speedStatusEffect.speedModifier);
-        } 
+        _hero.RemoveAllModifierFromSource(speedStatusEffect);
         base.End();
     }
 }

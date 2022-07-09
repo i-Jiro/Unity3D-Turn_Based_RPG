@@ -124,8 +124,8 @@ public class Hero : MonoBehaviour
     {
         _audioController.PlaySpecialAttackVoice();
         _animationController.PlaySpecialAttack();
-        AttackAbility attackAbility = ability as AttackAbility;
-        attackAbility.Trigger(enemyTarget, this);
+        AttackAbilityData attackAbility = ability as AttackAbilityData;
+        attackAbility.Trigger(this, enemyTarget);
         UseMana(ability.manaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(_currentMana);
@@ -137,10 +137,10 @@ public class Hero : MonoBehaviour
         Debug.Log(charName + " used " + ability.name);
         _audioController.PlaySelfBuffVoice();
         _animationController.PlayBuff();
-        SupportAbility buffAbility = ability as SupportAbility;
-        if (ability.targetParticlePrefb != null)
+        SupportAbilityData buffAbility = ability as SupportAbilityData;
+        if (ability.targetParticlePrefab != null)
         {
-            Instantiate(ability.targetParticlePrefb, transform.position, ability.targetParticlePrefb.transform.rotation);
+            Instantiate(ability.targetParticlePrefab, transform.position, ability.targetParticlePrefab.transform.rotation);
         }
         buffAbility.Trigger(this);
         UseMana(ability.manaCost);
@@ -241,6 +241,7 @@ public class Hero : MonoBehaviour
  
     private void TickStatusEffects()
     {
+        Debug.Log("Dict Count: " + _statusEffects.Values.ToList().Count);
         foreach(StatusEffect status in _statusEffects.Values.ToList()) //creates copy into a list to iterate with. Avoids error if iterating and operating in oringal dict.
         {
             status.Tick();
@@ -274,6 +275,11 @@ public class Hero : MonoBehaviour
     public void RemoveModifier(StatModifier statMod)
     {
         _speedStat.RemoveModifier(statMod);
+    }
+
+    public void RemoveAllModifierFromSource(object source)
+    {
+        _speedStat.RemoveAllModifierFromSource(source);
     }
 
     protected virtual void StartTurn()
