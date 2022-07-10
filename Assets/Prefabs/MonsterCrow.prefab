@@ -120,10 +120,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charName: Monster Bird
-  currentHealth: 100
-  currentMana: 100
-  defence: 10
-  speed: 15
+  _currentHealth: 100
+  _currentMana: 100
+  maxHealthStat:
+    baseValue: 100
+    _value: 0
+  maxManaStat:
+    baseValue: 100
+    _value: 0
+  physicalAttackStat:
+    baseValue: 10
+    _value: 0
+  physicalDefenseStat:
+    baseValue: 10
+    _value: 0
+  speedStat:
+    baseValue: 10
+    _value: 0
+  criticalStat:
+    baseValue: 0
+    _value: 0
+  evasionStat:
+    baseValue: 0
+    _value: 0
+  _baseDamageMultiplier: 1
+  abilitiesData: []
   _startPositionOffsetMax: 3.5
   _startPositionOffsetMin: 1.7
 --- !u!114 &1169946812716478649
