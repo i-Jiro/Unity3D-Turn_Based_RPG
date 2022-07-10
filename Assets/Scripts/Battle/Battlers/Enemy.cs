@@ -26,7 +26,7 @@ public class Enemy : Battler
     protected virtual void Attack(Hero hero)
     {
         Debug.Log(gameObject.name + " attacked " + hero.gameObject.name);
-        hero.TakeDamage(CalculateDamage(_baseDamageMultiplier));
+        hero.TakeDamage(CalculateDamage(baseDamageMultiplier));
         EndTurn();
     }
 

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BattleManager : MonoBehaviour
 {
-    public static BattleManager Instance { get; private set; }
-
     public List<Enemy> enemies;
     public List<Hero> heroes;
     public List<Transform> heroesStartingPositions;
@@ -17,6 +15,8 @@ public class BattleManager : MonoBehaviour
 
     public delegate void ActiveTurnEvent(bool value);
     public static ActiveTurnEvent OnActiveTurnChanged;
+
+    public static BattleManager Instance { get; private set; }
 
     private void OnEnable()
     {

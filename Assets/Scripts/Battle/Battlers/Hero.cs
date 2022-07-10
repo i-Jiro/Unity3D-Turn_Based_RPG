@@ -1,56 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 [RequireComponent(typeof(HeroAnimationController))]
 [RequireComponent(typeof(HeroAudioController))]
-public class Hero : MonoBehaviour
+public class Hero : Battler
 {
-    const float CHANCE_CAP = 1000f;
+    [SerializeField] float _moveOffset = 2f;
+    [SerializeField] float _moveSpeed = 9f;
+    protected float manaRegenRate = 10f;
 
-    [SerializeField] protected string charName = "";
+    private StatModifier defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
+    private bool isDefending = false;
 
-    [SerializeField] float _currentHealth = 100;
-    [SerializeField] protected float _currentMana = 100;
-    [SerializeField] float _manaRegenRate = 10;
-
-    [SerializeField] CharacterStat _maxHealthStat;
-    [SerializeField] CharacterStat _maxManaStat;
-    [SerializeField] CharacterStat _physicalAttackStat;
-    [SerializeField] CharacterStat _physicalDefenseStat;
-    [SerializeField] CharacterStat _speedStat;
-    [SerializeField] CharacterStat _criticalStat;
-    [SerializeField] CharacterStat _evasionStat;
-
-    [SerializeField] float _baseDamageMultiplier = 1.0f;
-    [SerializeField] float _moveOffset = 3f;
-    [SerializeField] float _moveSpeed = 3f;
-
-    [SerializeField] List<AbilityData> _abilitiesData;
-    protected readonly List<Ability> _abilities;
-    public readonly ReadOnlyCollection<Ability> Abilities;
-    private Dictionary<StatusEffectData, StatusEffect> _statusEffects;
-
-    private StatModifier _defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
-    private float _turnTimer = 0;
-    private float _turnTimerMax = 100;
-    private bool _isTurnTimerActive = false;
-    private bool _isDefending = false;
-
-    private HeroAnimationController _animationController;
-    private HeroAudioController _audioController;
-
-    public string Name
-    {
-        get { return charName; }
-        set { if (value.Length > 49) { Debug.LogWarning("Hero set with a name longer than 49 characters! Name will not fit UI."); } }
-    }
-    public float CurrentHealth { get { return _currentHealth; } }
-    public float CurrentMana { get { return _currentMana; } }
-    public float MaxHealth { get { return _maxHealthStat.Value; } }
-    public float MaxMana { get { return _maxManaStat.Value; } }
+    private HeroAnimationController animationController;
+    private HeroAudioController audioController;
 
     public delegate void HealthEventHandler(float health);
     public event HealthEventHandler OnHealthChanged;
@@ -64,252 +27,148 @@ public class Hero : MonoBehaviour
     public delegate void EventEndTurn();
     public event EventEndTurn OnEndTurn;
 
-    public Hero()
+    protected virtual void Awake()
     {
-        _abilitiesData = new List<AbilityData>();
-        _abilities = new List<Ability>();
-        Abilities = _abilities.AsReadOnly();
+        animationController = GetComponent<HeroAnimationController>();
+        audioController = GetComponent<HeroAudioController>();
     }
 
-    private void Awake()
+    protected override void Start()
     {
-        _animationController = GetComponent<HeroAnimationController>();
-        _audioController = GetComponent<HeroAudioController>();
-        _statusEffects = new Dictionary<StatusEffectData, StatusEffect>();
+        base.Start();
     }
 
-    private void Start()
+    protected override void Update()
     {
-        _currentHealth = _maxHealthStat.Value;
-        _currentMana = _maxManaStat.Value;
-        _isTurnTimerActive = true;
-        if (FindObjectOfType<BattleManager>())
-        {
-            BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
-        }
-        InitializeAbilities();
+        base.Update();
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void TickTurnTimer()
     {
-        if(_isTurnTimerActive)
-            TickTurnTimer();
+        OnTurnTimeChanged.Invoke(turnTimer);
+        base.TickTurnTimer();
     }
 
-    protected void InitializeAbilities()
-    {
-        foreach(AbilityData data in _abilitiesData)
-        {
-            Ability ability = data.Initialize(this.gameObject);
-            _abilities.Add(ability);
-        }
-    }
-    
-    public void ToggleTurnTimer(bool value)
-    {
-        _isTurnTimerActive = !value;
-    }
     public virtual void Attack(Enemy enemy)
     {
-        _audioController.PlayAttackVoice();
-        _animationController.PlayAttack();
+        audioController.PlayAttackVoice();
+        animationController.PlayAttack();
         Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
-        enemy.TakeDamage(CalculateDamage(_baseDamageMultiplier));
-    }
-
-    public float CalculateDamage(float damageMultiplier)
-    {
-        float finalDamage = _physicalAttackStat.Value * damageMultiplier;
-        float critChance = _criticalStat.Value;
-        float randValue = Random.value;
-        if (critChance > CHANCE_CAP) { critChance = CHANCE_CAP; }
-        critChance /= CHANCE_CAP;
-        if(randValue < 1 - critChance)
-        {
-            float critMultiplier = 1.25f;
-            finalDamage *= critMultiplier;
-        }
-        return Mathf.Round(Random.Range(finalDamage, (finalDamage * 1.01f)));
+        enemy.TakeDamage(CalculateDamage(baseDamageMultiplier));
     }
 
     //For abilities that target enemys
     public virtual void UseAbility(Enemy enemyTarget, Ability ability)
     {
-        _audioController.PlaySpecialAttackVoice();
-        _animationController.PlaySpecialAttack();
+        audioController.PlaySpecialAttackVoice();
+        animationController.PlaySpecialAttack();
         AttackAbility attackAbility = ability as AttackAbility;
         attackAbility.Trigger(this, enemyTarget);
         UseMana(ability.ManaCost);
-        if (OnManaChanged != null)
-            OnManaChanged.Invoke(_currentMana);
     }
 
     //For abilities that target self
     public virtual void UseAbility(Ability ability)
     {
         Debug.Log(charName + " used " + ability.Name);
-        _audioController.PlaySelfBuffVoice();
-        _animationController.PlayBuff();
+        audioController.PlaySelfBuffVoice();
+        animationController.PlayBuff();
         SupportAbility buffAbility = ability as SupportAbility;
         buffAbility.Trigger(this);
         UseMana(ability.ManaCost);
-        if (OnManaChanged != null)
-            OnManaChanged.Invoke(_currentMana);
     }
 
     //For abilities that target party members
     public virtual void UseAbility(Hero hero, Ability ability)
     {
         UseMana(ability.ManaCost);
-        if (OnManaChanged != null)
-            OnManaChanged.Invoke(_currentMana);
+    }
+
+    protected override void UseMana(float manaUsed)
+    {
+        base.UseMana(manaUsed);
+        UpdateManaUI();
     }
 
     public virtual void Defend()
     {
-        _audioController.PlayStartGuardVoice();
-        _isDefending = true;
-        _physicalDefenseStat.AddModifier(_defendStanceModifier);
-        _animationController.PlayDefend();
+        audioController.PlayStartGuardVoice();
+        isDefending = true;
+        physicalDefenseStat.AddModifier(defendStanceModifier);
+        animationController.PlayDefend();
         Debug.Log(gameObject.name + " defends.");
     }
 
     protected virtual void ResetDefence()
     {
-        if (_isDefending)
+        if (isDefending)
         {
-            _physicalDefenseStat.RemoveModifier(_defendStanceModifier);
-            _isDefending = false;
-            _animationController.StopDefend();
+            physicalDefenseStat.RemoveModifier(defendStanceModifier);
+            isDefending = false;
+            animationController.StopDefend();
         }
     }
 
-    public virtual void TakeDamage(float rawDamage)
+    public override void TakeDamage(float rawDamage)
     {
-        if (Evade() && !_isDefending)
+        if (Evade() && !isDefending)
         {
-            _audioController.PlayEvadeVoice();
-            _animationController.PlayEvade();
+            audioController.PlayEvadeVoice();
+            animationController.PlayEvade();
             Debug.Log(gameObject.name + " Evaded.");
             return;
         }
 
-        if (_isDefending) { _audioController.PlayGuardVoice(); }
-        else { _audioController.PlayHurtVoice(); }
-        _animationController.PlayGetDamaged();
-        float damage = rawDamage - _physicalDefenseStat.Value;
+        if (isDefending) { audioController.PlayGuardVoice(); }
+        else { audioController.PlayHurtVoice(); }
+        animationController.PlayGetDamaged();
+        float damage = rawDamage - physicalDefenseStat.Value;
         if (damage < 0)
             damage = 0;
-        _currentHealth -= damage;
-        if (OnHealthChanged != null)
-            OnHealthChanged.Invoke(_currentHealth);
-    }
-
-    private bool Evade()
-    {
-        bool didEvade = false;
-        float evasionChance = _evasionStat.Value;
-        float randValue = Random.value;
-        if(evasionChance > CHANCE_CAP) { evasionChance = CHANCE_CAP; }
-        evasionChance /= CHANCE_CAP;
-        if(randValue < evasionChance) { didEvade = true; }
-        return didEvade;
+        currentHealth -= damage;
+        UpdateHealthUI();
     }
 
     protected virtual void RegenerateMana()
     {
-        if (_currentMana + _manaRegenRate > _maxManaStat.Value)
-            _currentMana = _maxManaStat.Value;
+        if (currentMana + manaRegenRate > maxManaStat.Value)
+            currentMana = maxManaStat.Value;
         else
-            _currentMana += _manaRegenRate;
-        if (OnManaChanged != null)
-            OnManaChanged.Invoke(_currentMana);
+            currentMana += manaRegenRate;
+        UpdateManaUI();
     }
 
-    protected virtual void UseMana(float manaUsed)
-    {
-        _currentMana -= manaUsed;
-    }
-
-    //Charges character's turn meter based on it's speed.
-    protected virtual void TickTurnTimer()
-    {
-        if (_turnTimer < _turnTimerMax)
-        {
-            _turnTimer += Time.deltaTime * _speedStat.Value;
-            if (OnTurnTimeChanged != null)
-                OnTurnTimeChanged.Invoke(_turnTimer);
-        }
-        else if (_turnTimer > _turnTimerMax)
-        {
-            StartTurn();
-            Debug.Log(gameObject.name + " has reached it's turn.");
-        }
-    }
-
- 
-    private void TickStatusEffects()
-    {
-        foreach(StatusEffect status in _statusEffects.Values.ToList()) //creates copy into a list to iterate with. Avoids error if iterating and operating in oringal dict.
-        {
-            status.Tick();
-            if (status.isFinished)
-            {
-                _statusEffects.Remove(status.Data);
-            }
-        }
-    }
-
-    public void AddStatusEffect(StatusEffect statusEffect)
-    {
-        Debug.Log("Status effect added: " + statusEffect.Data.Name);
-        if (_statusEffects.ContainsKey(statusEffect.Data))
-        {
-            _statusEffects[statusEffect.Data].Start();
-        }
-        else
-        {
-            _statusEffects.Add(statusEffect.Data, statusEffect);
-            _statusEffects[statusEffect.Data].Start();
-        }
-    }
-
-
-    public void AddModifier(StatModifier statMod)
-    {
-        _speedStat.AddModifier(statMod);
-    }
-
-    public void RemoveModifier(StatModifier statMod)
-    {
-        _speedStat.RemoveModifier(statMod);
-    }
-
-    public void RemoveAllModifierFromSource(object source)
-    {
-        _speedStat.RemoveAllModifierFromSource(source);
-    }
-
-    protected virtual void StartTurn()
+    protected override void StartTurn()
     {
         StartCoroutine(MoveLeft());
-        _audioController.PlayStartTurnVoice();
-        _animationController.PlayMoveForward();
-        _animationController.PlayReady();
+        audioController.PlayStartTurnVoice();
+        animationController.PlayMoveForward();
+        animationController.PlayReady();
         RegenerateMana();
         ResetDefence();
         OnStartTurn.Invoke(this);
     }
 
-    protected virtual void EndTurn()
+    protected override void EndTurn()
     {
         TickStatusEffects();
         StartCoroutine(MoveRight());
-        _animationController.PlayMoveBackward();
-        _turnTimer = 0;
-        _animationController.PlayIdle();
+        animationController.PlayMoveBackward();
+        turnTimer = 0;
+        animationController.PlayIdle();
         OnEndTurn.Invoke();
+    }
+
+    protected void UpdateManaUI()
+    {
+        if (OnManaChanged != null)
+            OnManaChanged.Invoke(currentMana);
+    }
+
+    protected void UpdateHealthUI()
+    {
+        if (OnHealthChanged != null)
+            OnHealthChanged.Invoke(currentHealth);
     }
 
     #region IEnumerators

@@ -10,8 +10,8 @@ public abstract class Battler : MonoBehaviour
     protected const float TURN_TIMER_MAX = 100;
 
     [SerializeField] protected string charName = "";
-    [SerializeField] protected float _currentHealth = 100;
-    [SerializeField] protected float _currentMana = 100;
+    [SerializeField] protected float currentHealth = 100;
+    [SerializeField] protected float currentMana = 100;
 
     [SerializeField] protected CharacterStat maxHealthStat;
     [SerializeField] protected CharacterStat maxManaStat;
@@ -21,7 +21,7 @@ public abstract class Battler : MonoBehaviour
     [SerializeField] protected CharacterStat criticalStat;
     [SerializeField] protected CharacterStat evasionStat;
 
-    [SerializeField] protected float _baseDamageMultiplier = 1.0f;
+    [SerializeField] protected float baseDamageMultiplier = 1.0f;
 
     [SerializeField]protected List<AbilityData> abilitiesData;
     protected readonly List<Ability> abilities;
@@ -37,8 +37,8 @@ public abstract class Battler : MonoBehaviour
         set { if (value.Length > 49) { Debug.LogWarning("Battler set with a name longer than 49 characters! Name will not fit UI."); } }
     }
 
-    public float CurrentHealth { get { return _currentHealth; } }
-    public float CurrentMana { get { return _currentMana; } }
+    public float CurrentHealth { get { return currentHealth; } }
+    public float CurrentMana { get { return currentMana; } }
     public float MaxHealth { get { return maxHealthStat.Value; } }
     public float MaxMana { get { return maxManaStat.Value; } }
 
@@ -46,20 +46,22 @@ public abstract class Battler : MonoBehaviour
     {
         abilitiesData = new List<AbilityData>();
         abilities = new List<Ability>();
+        statusEffects = new Dictionary<StatusEffectData, StatusEffect>();
         Abilities = abilities.AsReadOnly();
     }
 
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        _currentHealth = maxHealthStat.Value;
-        _currentMana = maxManaStat.Value;
+        currentHealth = maxHealthStat.Value;
+        currentMana = maxManaStat.Value;
         isTurnTimerActive = true;
         if (FindObjectOfType<BattleManager>())
         {
             BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
         }
         else { Debug.LogError(gameObject.name + ": Can't find Battle Manager on scnene!"); }
+        InitializeAbilities();
     }
 
     // Update is called once per frame
@@ -67,6 +69,15 @@ public abstract class Battler : MonoBehaviour
     {
         if (isTurnTimerActive)
             TickTurnTimer();
+    }
+
+    protected void InitializeAbilities()
+    {
+        foreach (AbilityData data in abilitiesData)
+        {
+            Ability ability = data.Initialize(this.gameObject);
+            abilities.Add(ability);
+        }
     }
 
     protected abstract void StartTurn();
@@ -107,10 +118,32 @@ public abstract class Battler : MonoBehaviour
 
     public virtual void TakeDamage(float rawDamage)
     {
+        if (Evade())
+        {
+            Debug.Log(gameObject.name + " evaded.");
+            return;
+        }
+
         float damage = rawDamage - physicalDefenseStat.Value;
         if (damage < 0)
             damage = 0;
-        _currentHealth -= damage;
+        currentHealth -= damage;
+    }
+
+    protected virtual void UseMana(float manaUsed)
+    {
+        currentMana -= manaUsed;
+    }
+
+    protected virtual bool Evade()
+    {
+        bool didEvade = false;
+        float evasionChance = evasionStat.Value;
+        float randValue = Random.value;
+        if (evasionChance > CHANCE_CAP) { evasionChance = CHANCE_CAP; }
+        evasionChance /= CHANCE_CAP;
+        if (randValue < evasionChance) { didEvade = true; }
+        return didEvade;
     }
 
     protected void TickStatusEffects()
