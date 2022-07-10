@@ -45,7 +45,7 @@ public class Hero : Battler
 
     protected override void TickTurnTimer()
     {
-        OnTurnTimeChanged.Invoke(turnTimer);
+        UpdateTimeUI();
         base.TickTurnTimer();
     }
 
@@ -168,7 +168,12 @@ public class Hero : Battler
     protected void UpdateHealthUI()
     {
         if (OnHealthChanged != null)
-            OnHealthChanged.Invoke(currentHealth);
+            OnTurnTimeChanged.Invoke(currentHealth);
+    }
+    protected void UpdateTimeUI()
+    {
+        if (OnTurnTimeChanged != null)
+            OnTurnTimeChanged.Invoke(turnTimer);
     }
 
     #region IEnumerators
