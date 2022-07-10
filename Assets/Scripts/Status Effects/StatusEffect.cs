@@ -22,7 +22,7 @@ public abstract class StatusEffect
         {
             _currentTurnDuration--;
         }
-        else if(_currentTurnDuration == 0)
+        else if(_currentTurnDuration <= 0)
         {
             isFinished = true;
             End();
@@ -31,6 +31,7 @@ public abstract class StatusEffect
 
     public void Start()
     {
+        isFinished = false;
         if (Data.isEffectStackable || _currentTurnDuration == 0)
         {
             ApplyEffect();

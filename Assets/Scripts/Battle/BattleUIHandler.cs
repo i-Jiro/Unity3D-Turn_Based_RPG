@@ -27,13 +27,13 @@ public class BattleUIHandler : MonoBehaviour
     private bool _isSelectingAlly = false;
     private bool _isInAbilityMenu = false;
     private int _index;
-    private AbilityData _selectedAbility;
+    private Ability _selectedAbility;
     private UISoundHandler _soundHandler;
 
     public delegate void AttackSelectEnemyEvent(Enemy enemy);
     public static event AttackSelectEnemyEvent OnSelectEnemyAttack;
 
-    public delegate void AbilitySelectEnemyEvent(Enemy enemy, AbilityData ability);
+    public delegate void AbilitySelectEnemyEvent(Enemy enemy, Ability ability);
     public static event AbilitySelectEnemyEvent OnSelectEnemyAbility;
 
     private void Awake()
@@ -99,6 +99,12 @@ public class BattleUIHandler : MonoBehaviour
         _actionMenu.gameObject.SetActive(false);
         _abilitiesMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
+
+        foreach(Button button in _abilityButtons)
+        {
+           button.onClick.RemoveAllListeners();
+        }
+
         for(int i = 0; i < _abilityButtons.Count; i++)
         {
             //Buttons that are not assigned an ability are hidden.
@@ -108,9 +114,9 @@ public class BattleUIHandler : MonoBehaviour
                 continue;
             }
 
-            AbilityData ability = currentHero.Abilities[i];
-            string abilityName = ability.AbilityName;
-            float manaCost = ability.manaCost;
+            Ability ability = currentHero.Abilities[i];
+            string abilityName = ability.Name;
+            float manaCost = ability.ManaCost;
             _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
 
             if (manaCost > currentHero.CurrentMana)
@@ -119,12 +125,12 @@ public class BattleUIHandler : MonoBehaviour
             }
 
             //Sort out abilities into buttons based on their ability script subclass type.
-            if (ability.GetType() == typeof(AttackAbilityData))
+            if (ability.GetType() == typeof(AttackAbility))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
                 Debug.Log(abilityName + "is an Attack Ability.");
             }
-            else if(ability.GetType() == typeof(SupportAbilityData))
+            else if(ability.GetType() == typeof(SupportAbility))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _abilitiesMenu.SetActive(false); });
                 Debug.Log(abilityName + " is a Support Ability.");
@@ -152,7 +158,7 @@ public class BattleUIHandler : MonoBehaviour
         _index = 0;
     }
     //Overload for abilities that require targeting enemies.
-    private void StartSelectEnemy(SelectorType type, AbilityData ability)
+    private void StartSelectEnemy(SelectorType type, Ability ability)
     {
         _abilitiesMenu.gameObject.SetActive(false);
         _selectedAbility = ability;

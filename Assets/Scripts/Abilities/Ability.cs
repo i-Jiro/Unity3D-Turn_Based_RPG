@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ability
+public abstract class Ability
 {
     public string Name;
+    public float ManaCost { get; }
     public GameObject Source { get; }
     protected readonly AbilityData abilityData;
     protected readonly List<StatusEffectData> statusEffectsDataList;
-    protected List<StatusEffect> statusEffects;
+    protected readonly List<StatusEffect> statusEffects;
 
     public Ability(AbilityData data, GameObject source, List<StatusEffectData> statusEffectDataList)
     {
         abilityData = data;
+        ManaCost = data.manaCost;
         Name = data.AbilityName;
         statusEffectsDataList = statusEffectDataList;
         statusEffects = new List<StatusEffect>();

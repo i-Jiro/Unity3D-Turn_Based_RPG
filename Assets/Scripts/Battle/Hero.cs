@@ -28,9 +28,11 @@ public class Hero : MonoBehaviour
     [SerializeField] float _moveOffset = 3f;
     [SerializeField] float _moveSpeed = 3f;
 
-    [SerializeField] List<AbilityData> _abilities;
-    public readonly ReadOnlyCollection<AbilityData> Abilities;
+    [SerializeField] List<AbilityData> _abilitiesData;
+    protected readonly List<Ability> _abilities;
+    public readonly ReadOnlyCollection<Ability> Abilities;
     private Dictionary<StatusEffectData, StatusEffect> _statusEffects;
+
     private StatModifier _defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
     private float _turnTimer = 0;
     private float _turnTimerMax = 100;
@@ -64,7 +66,8 @@ public class Hero : MonoBehaviour
 
     public Hero()
     {
-        _abilities = new List<AbilityData>();
+        _abilitiesData = new List<AbilityData>();
+        _abilities = new List<Ability>();
         Abilities = _abilities.AsReadOnly();
     }
 
@@ -84,6 +87,7 @@ public class Hero : MonoBehaviour
         {
             BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
         }
+        InitializeAbilities();
     }
 
     // Update is called once per frame
@@ -92,6 +96,16 @@ public class Hero : MonoBehaviour
         if(_isTurnTimerActive)
             TickTurnTimer();
     }
+
+    protected void InitializeAbilities()
+    {
+        foreach(AbilityData data in _abilitiesData)
+        {
+            Ability ability = data.Initialize(this.gameObject);
+            _abilities.Add(ability);
+        }
+    }
+    
     public void ToggleTurnTimer(bool value)
     {
         _isTurnTimerActive = !value;
@@ -104,7 +118,7 @@ public class Hero : MonoBehaviour
         enemy.TakeDamage(CalculateDamage(_baseDamageMultiplier));
     }
 
-    private float CalculateDamage(float damageMultiplier)
+    public float CalculateDamage(float damageMultiplier)
     {
         float finalDamage = _physicalAttackStat.Value * damageMultiplier;
         float critChance = _criticalStat.Value;
@@ -120,38 +134,34 @@ public class Hero : MonoBehaviour
     }
 
     //For abilities that target enemys
-    public virtual void UseAbility(Enemy enemyTarget, AbilityData ability)
+    public virtual void UseAbility(Enemy enemyTarget, Ability ability)
     {
         _audioController.PlaySpecialAttackVoice();
         _animationController.PlaySpecialAttack();
-        AttackAbilityData attackAbility = ability as AttackAbilityData;
+        AttackAbility attackAbility = ability as AttackAbility;
         attackAbility.Trigger(this, enemyTarget);
-        UseMana(ability.manaCost);
+        UseMana(ability.ManaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(_currentMana);
     }
 
     //For abilities that target self
-    public virtual void UseAbility(AbilityData ability)
+    public virtual void UseAbility(Ability ability)
     {
-        Debug.Log(charName + " used " + ability.name);
+        Debug.Log(charName + " used " + ability.Name);
         _audioController.PlaySelfBuffVoice();
         _animationController.PlayBuff();
-        SupportAbilityData buffAbility = ability as SupportAbilityData;
-        if (ability.targetParticlePrefab != null)
-        {
-            Instantiate(ability.targetParticlePrefab, transform.position, ability.targetParticlePrefab.transform.rotation);
-        }
+        SupportAbility buffAbility = ability as SupportAbility;
         buffAbility.Trigger(this);
-        UseMana(ability.manaCost);
+        UseMana(ability.ManaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(_currentMana);
     }
 
     //For abilities that target party members
-    public virtual void UseAbility(Hero hero, AbilityData ability)
+    public virtual void UseAbility(Hero hero, Ability ability)
     {
-        UseMana(ability.manaCost);
+        UseMana(ability.ManaCost);
         if (OnManaChanged != null)
             OnManaChanged.Invoke(_currentMana);
     }
@@ -241,7 +251,6 @@ public class Hero : MonoBehaviour
  
     private void TickStatusEffects()
     {
-        Debug.Log("Dict Count: " + _statusEffects.Values.ToList().Count);
         foreach(StatusEffect status in _statusEffects.Values.ToList()) //creates copy into a list to iterate with. Avoids error if iterating and operating in oringal dict.
         {
             status.Tick();

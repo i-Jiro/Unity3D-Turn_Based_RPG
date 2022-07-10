@@ -63,13 +63,13 @@ public class BattleManager : MonoBehaviour
         _currentHero.Attack(enemy);
     }
 
-    public void ChoseAbility(AbilityData ability)
+    public void ChoseAbility(Ability ability)
     {
-        Debug.Log(ability.name + " activated.");
+        Debug.Log(ability.Name + " activated.");
         _currentHero.UseAbility(ability);
     }
 
-    public void ChoseAbility(Enemy enemy, AbilityData ability)
+    public void ChoseAbility(Enemy enemy, Ability ability)
     {
         _currentHero.UseAbility(enemy, ability);
     }

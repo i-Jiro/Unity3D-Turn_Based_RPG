@@ -19,5 +19,11 @@ public class AttackAbilityData : AbilityData
         }
         enemyTarget.TakeDamage(baseMagnitude);
     }
+
+    public override Ability Initialize(GameObject source)
+    {
+        return new AttackAbility(this, source, statusEffectDataList);
+    }
+
 }
 

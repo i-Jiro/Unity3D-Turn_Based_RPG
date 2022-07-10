@@ -10,4 +10,6 @@ public abstract class AbilityData : ScriptableObject
     public GameObject userParticlePrefab;
     public GameObject targetParticlePrefab;
     public List<StatusEffectData> statusEffectDataList;
+
+    public abstract Ability Initialize(GameObject source);
 }
