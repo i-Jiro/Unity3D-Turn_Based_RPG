@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d184a448c3920d44caab1af5134a649d, type: 3}
   m_Name: Test Attack Ability
   m_EditorClassIdentifier: 
-  AbilityName: Strike
-  Multiplier: 2
+  AbilityName: Rage
+  Multiplier: 10
   ManaCost: 1
   userParticlePrefab: {fileID: 0}
   targetParticlePrefab: {fileID: 0}

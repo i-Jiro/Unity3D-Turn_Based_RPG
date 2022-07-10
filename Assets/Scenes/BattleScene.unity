@@ -5628,11 +5628,11 @@ PrefabInstance:
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _abilitiesData.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: d6c0c83d1467b364b81b0c2e15352193, type: 2}
+      objectReference: {fileID: 11400000, guid: 00efcf4d4a47b054d84f2fb4c3682a32, type: 2}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _abilitiesData.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 00efcf4d4a47b054d84f2fb4c3682a32, type: 2}
+      objectReference: {fileID: 11400000, guid: d6c0c83d1467b364b81b0c2e15352193, type: 2}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: _physicalAttackStat.baseValue
       value: 10
