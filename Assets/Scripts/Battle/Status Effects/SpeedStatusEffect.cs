@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class SpeedStatusEffect : StatusEffect
 {
-    Hero _hero;
-    SpeedStatusEffectData speedStatusEffect;
-    public SpeedStatusEffect(SpeedStatusEffectData data, int duration, GameObject target) : base(data, duration, target)
+    SpeedStatusEffectData _speedStatusEffect;
+    Battler _battler;
+    public SpeedStatusEffect(SpeedStatusEffectData data) : base(data)
     {
-        speedStatusEffect = Data as SpeedStatusEffectData;
-        _hero = target.GetComponent<Hero>();
+        _speedStatusEffect = Data as SpeedStatusEffectData;
     }
 
-    protected override void ApplyEffect()
+    protected override void ApplyEffect(Battler battler)
     {
-        _hero.AddModifier(speedStatusEffect.speedModifier);
+       _battler = battler;
+       _battler.AddModifier(_speedStatusEffect.speedModifier);
     }
 
     public override void End()
     {
-        _hero.RemoveAllModifierFromSource(speedStatusEffect);
+       _battler.RemoveAllModifierFromSource(_speedStatusEffect);
         base.End();
     }
 }

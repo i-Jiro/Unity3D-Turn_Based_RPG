@@ -22,6 +22,7 @@ public abstract class Battler : MonoBehaviour
     [SerializeField] protected CharacterStat evasionStat;
 
     [SerializeField] protected float baseDamageMultiplier = 1.0f;
+    [SerializeField] protected float critDamageMultiplier = 1.25f;
 
     [SerializeField]protected List<AbilityData> abilitiesData;
     protected readonly List<Ability> abilities;
@@ -92,8 +93,7 @@ public abstract class Battler : MonoBehaviour
         critChance /= CHANCE_CAP;
         if (randValue < 1 - critChance)
         {
-            float critMultiplier = 1.25f;
-            finalDamage *= critMultiplier;
+            finalDamage *= critDamageMultiplier;
         }
         return Mathf.Round(Random.Range(finalDamage, (finalDamage * 1.01f)));
     }
@@ -163,12 +163,12 @@ public abstract class Battler : MonoBehaviour
         Debug.Log("Status effect added: " + statusEffect.Data.Name + " on " + this.Name);
         if (statusEffects.ContainsKey(statusEffect.Data))
         {
-            statusEffects[statusEffect.Data].Start();
+            statusEffects[statusEffect.Data].Start(this);
         }
         else
         {
             statusEffects.Add(statusEffect.Data, statusEffect);
-            statusEffects[statusEffect.Data].Start();
+            statusEffects[statusEffect.Data].Start(this);
         }
     }
 

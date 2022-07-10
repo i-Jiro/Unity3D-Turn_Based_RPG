@@ -9,9 +9,9 @@ public class SpeedStatusEffectData : StatusEffectData
     public StatModifierType ModifierType;
     public StatModifier speedModifier;
 
-    public override StatusEffect Initialize(GameObject target)
+    public override StatusEffect Initialize()
     {
-        return new SpeedStatusEffect(this, turnDuration, target);
+        return new SpeedStatusEffect(this);
     }
 
     private void OnEnable()

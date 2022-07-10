@@ -5,14 +5,12 @@ using UnityEngine;
 public abstract class StatusEffect
 {
     public StatusEffectData Data;
-    public object target;
     private int _currentTurnDuration;
     public bool isFinished = false;
     protected int _effectStacks;
 
-    public StatusEffect(StatusEffectData data, int duration, object target)
+    public StatusEffect(StatusEffectData data)
     {
-        this.target = target;
         Data = data;
     }
 
@@ -29,12 +27,12 @@ public abstract class StatusEffect
         }
     }
 
-    public void Start()
+    public void Start(Battler battler)
     {
         isFinished = false;
         if (Data.isEffectStackable || _currentTurnDuration == 0)
         {
-            ApplyEffect();
+            ApplyEffect(battler);
             _effectStacks++;
         }
 
@@ -44,7 +42,7 @@ public abstract class StatusEffect
         }
     }
 
-    protected abstract void ApplyEffect();
+    protected abstract void ApplyEffect(Battler battle);
     public virtual void End()
     {
         _effectStacks = 0;

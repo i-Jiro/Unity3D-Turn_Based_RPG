@@ -32,7 +32,7 @@ public abstract class Ability
         {
             foreach(StatusEffectData data in statusEffectsDataList)
             {
-                StatusEffect statusEffect = data.Initialize(Source);
+                StatusEffect statusEffect = data.Initialize();
                 statusEffects.Add(statusEffect);
             }
         }

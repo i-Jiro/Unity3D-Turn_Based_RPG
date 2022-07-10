@@ -8,5 +8,5 @@ public abstract class StatusEffectData : ScriptableObject
     public int turnDuration;
     public bool isEffectStackable;
     public bool isDurationStackable;
-    public abstract StatusEffect Initialize(GameObject target);
+    public abstract StatusEffect Initialize();
 }
