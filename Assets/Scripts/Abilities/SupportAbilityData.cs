@@ -6,7 +6,7 @@ using UnityEngine;
 public class SupportAbilityData : AbilityData
 {
 
-    public void Trigger(Hero heroUser)
+    public void TriggerEffect(Hero heroUser)
     {
         Debug.Log(heroUser.Name + " used " + AbilityName);
         if (targetParticlePrefab != null)

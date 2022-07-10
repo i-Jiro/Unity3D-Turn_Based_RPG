@@ -9,7 +9,7 @@ public class SupportAbility : Ability, ISelfTargetable
     public void Trigger(Hero hero)
     {
         SupportAbilityData data = abilityData as SupportAbilityData;
-        data.Trigger(hero);
+        data.TriggerEffect(hero);
         foreach(StatusEffect status in statusEffects)
         {
             hero.AddStatusEffect(status);

@@ -100,6 +100,7 @@ public class BattleUIHandler : MonoBehaviour
         _abilitiesMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
 
+        //Clears button for reuse.
         foreach(Button button in _abilityButtons)
         {
            button.onClick.RemoveAllListeners();

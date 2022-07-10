@@ -5,8 +5,8 @@ using UnityEngine;
 public abstract class AbilityData : ScriptableObject
 {
     public string AbilityName = "New Ability";
-    public int baseMagnitude = 1;
-    public int manaCost = 1;
+    public int Multiplier = 1;
+    public int ManaCost = 1;
     public GameObject userParticlePrefab;
     public GameObject targetParticlePrefab;
     public List<StatusEffectData> statusEffectDataList;

@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Ability
 {
     public string Name;
+    public float Multiplier { get; }
     public float ManaCost { get; }
     public GameObject Source { get; }
     protected readonly AbilityData abilityData;
@@ -14,8 +15,9 @@ public abstract class Ability
     public Ability(AbilityData data, GameObject source, List<StatusEffectData> statusEffectDataList)
     {
         abilityData = data;
-        ManaCost = data.manaCost;
+        ManaCost = data.ManaCost;
         Name = data.AbilityName;
+        Multiplier = data.Multiplier;
         statusEffectsDataList = statusEffectDataList;
         statusEffects = new List<StatusEffect>();
         Source = source;
