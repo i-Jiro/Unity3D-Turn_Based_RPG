@@ -5295,14 +5295,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MonsterCrow
       objectReference: {fileID: 0}
-    - target: {fileID: 1169946812716478653, guid: 1f8f0bd4c88312f4faceae97c9743cd4, type: 3}
-      propertyPath: speedStat.baseValue
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 1169946812716478653, guid: 1f8f0bd4c88312f4faceae97c9743cd4, type: 3}
-      propertyPath: physicalAttackStat.baseValue
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 1169946812716478654, guid: 1f8f0bd4c88312f4faceae97c9743cd4, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -5481,6 +5473,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: speedStat.BaseValue
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: evasionStat.BaseValue
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: maxManaStat.BaseValue
+      value: 9999
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: criticalStat.BaseValue
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: maxHealthStat.BaseValue
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: physicalAttackStat.BaseValue
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: physicalDefenseStat.BaseValue
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629203, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: m_RootOrder
       value: 1

@@ -6,6 +6,7 @@ using UnityEngine;
 public class SpeedStatusEffectData : StatusEffectData
 {
     public float ModifierValue = 0.0f;
+    private StatType StatToModify = StatType.Speed;
     public StatModifierType ModifierType;
     public StatModifier speedModifier;
 
@@ -16,7 +17,7 @@ public class SpeedStatusEffectData : StatusEffectData
 
     private void OnEnable()
     {
-        speedModifier = new StatModifier(ModifierValue, ModifierType, this);
+        speedModifier = new StatModifier(ModifierValue, StatToModify, ModifierType, this);
     }
 
 }

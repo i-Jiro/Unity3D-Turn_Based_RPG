@@ -6,20 +6,22 @@ public enum StatModifierType { Flat = 100, PercentAdd = 200, PercentMultiply = 3
 
 public class StatModifier
 {
-    public readonly int order;
-    public readonly float value;
-    public readonly StatModifierType type;
-    public readonly object source;
-    public StatModifier(float value, StatModifierType type, int order, object source)
+    public readonly int Order;
+    public readonly float Value;
+    public readonly StatModifierType Type;
+    public readonly StatType StatType;
+    public readonly object Source;
+    public StatModifier(float value, StatType statType, StatModifierType type, int order, object source)
     {
-        this.value = value;
-        this.type = type;
-        this.order = order;
-        this.source = source;
+        this.Value = value;
+        this.Type = type;
+        this.Order = order;
+        this.Source = source;
+        this.StatType = statType;
     }
 
-    public StatModifier(float value, StatModifierType type) : this(value, type, (int)type, null) { }
-    public StatModifier(float value, StatModifierType type, int order) : this(value, type, order, null) { }
-    public StatModifier(float value, StatModifierType type, object source) : this(value, type, (int)type, source) { }
+    public StatModifier(float value, StatType statype, StatModifierType type) : this(value, statype, type, (int)type, null) { }
+    public StatModifier(float value, StatType statype, StatModifierType type, int order) : this(value, statype, type, order, null) { }
+    public StatModifier(float value, StatType statype, StatModifierType type, object source) : this(value, statype, type, (int)type, source) { }
 
 }

@@ -7,11 +7,11 @@ using System.Linq;
 public abstract class Battler : MonoBehaviour
 {
     protected const float CHANCE_CAP = 1000f;
-    protected const float TURN_TIMER_MAX = 100;
+    protected const float TURN_TIMER_MAX = 100f;
 
     [SerializeField] protected string charName = "";
-    [SerializeField] protected float currentHealth = 100;
-    [SerializeField] protected float currentMana = 100;
+    [SerializeField] protected float currentHealth = 100f;
+    [SerializeField] protected float currentMana = 100f;
 
     [SerializeField] protected CharacterStat maxHealthStat;
     [SerializeField] protected CharacterStat maxManaStat;
@@ -20,6 +20,7 @@ public abstract class Battler : MonoBehaviour
     [SerializeField] protected CharacterStat speedStat;
     [SerializeField] protected CharacterStat criticalStat;
     [SerializeField] protected CharacterStat evasionStat;
+    public readonly List<CharacterStat> Stats;
 
     [SerializeField] protected float baseDamageMultiplier = 1.0f;
     [SerializeField] protected float critDamageMultiplier = 1.25f;
@@ -49,6 +50,24 @@ public abstract class Battler : MonoBehaviour
         abilities = new List<Ability>();
         statusEffects = new Dictionary<StatusEffectData, StatusEffect>();
         Abilities = abilities.AsReadOnly();
+
+        maxHealthStat = new CharacterStat(StatType.MaxHealth);
+        maxManaStat = new CharacterStat(StatType.MaxMana);
+        physicalAttackStat = new CharacterStat(StatType.PhysicalAttack);
+        physicalDefenseStat = new CharacterStat(StatType.PhysicalDefense);
+        speedStat = new CharacterStat(StatType.Speed);
+        criticalStat = new CharacterStat(StatType.Critical);
+        evasionStat = new CharacterStat(StatType.Evasion);
+
+        Stats = new List<CharacterStat>
+        {
+            maxHealthStat,
+            maxManaStat,
+            physicalAttackStat,
+            speedStat,
+            criticalStat,
+            evasionStat
+        };
     }
 
     // Start is called before the first frame update
@@ -174,12 +193,26 @@ public abstract class Battler : MonoBehaviour
 
     public void AddModifier(StatModifier statMod)
     {
-        speedStat.AddModifier(statMod);
+        foreach(CharacterStat stat in Stats)
+        {
+            if(stat.Type == statMod.StatType)
+            {
+                stat.AddModifier(statMod);
+                return;
+            }
+        }
     }
 
     public void RemoveModifier(StatModifier statMod)
     {
-        speedStat.RemoveModifier(statMod);
+        foreach (CharacterStat stat in Stats)
+        {
+            if (stat.Type == statMod.StatType)
+            {
+                stat.RemoveModifier(statMod);
+                return;
+            }
+        }
     }
 
     public void RemoveAllModifierFromSource(object source)

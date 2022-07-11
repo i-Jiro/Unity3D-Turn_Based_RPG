@@ -9,7 +9,7 @@ public class Hero : Battler
     [SerializeField] float _moveSpeed = 9f;
     protected float manaRegenRate = 10f;
 
-    private StatModifier defendStanceModifier = new StatModifier(1, StatModifierType.PercentMultiply);
+    private StatModifier defendStanceModifier = new StatModifier(1,StatType.PhysicalDefense, StatModifierType.PercentMultiply);
     private bool isDefending = false;
 
     private HeroAnimationController animationController;
@@ -94,7 +94,7 @@ public class Hero : Battler
     {
         audioController.PlayStartGuardVoice();
         isDefending = true;
-        physicalDefenseStat.AddModifier(defendStanceModifier);
+        AddModifier(defendStanceModifier);
         animationController.PlayDefend();
         Debug.Log(gameObject.name + " defends.");
     }
@@ -103,7 +103,7 @@ public class Hero : Battler
     {
         if (isDefending)
         {
-            physicalDefenseStat.RemoveModifier(defendStanceModifier);
+            RemoveModifier(defendStanceModifier);
             isDefending = false;
             animationController.StopDefend();
         }
