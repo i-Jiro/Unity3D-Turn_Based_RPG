@@ -146,7 +146,7 @@ public class Hero : Battler
         animationController.PlayReady();
         RegenerateMana();
         ResetDefence();
-        OnStartTurn.Invoke(this);
+        OnStartTurn?.Invoke(this);
     }
 
     protected override void EndTurn()
@@ -156,24 +156,21 @@ public class Hero : Battler
         animationController.PlayMoveBackward();
         turnTimer = 0;
         animationController.PlayIdle();
-        OnEndTurn.Invoke();
+        OnEndTurn?.Invoke();
     }
 
     protected void UpdateManaUI()
     {
-        if (OnManaChanged != null)
-            OnManaChanged.Invoke(currentMana);
+        OnManaChanged?.Invoke(currentMana);
     }
 
     protected void UpdateHealthUI()
     {
-        if (OnHealthChanged != null)
-            OnTurnTimeChanged.Invoke(currentHealth);
+        OnTurnTimeChanged?.Invoke(currentHealth);
     }
     protected void UpdateTimeUI()
     {
-        if (OnTurnTimeChanged != null)
-            OnTurnTimeChanged.Invoke(turnTimer);
+        OnTurnTimeChanged?.Invoke(turnTimer);
     }
 
     #region IEnumerators
