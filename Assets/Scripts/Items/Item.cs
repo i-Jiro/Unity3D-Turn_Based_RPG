@@ -4,17 +4,17 @@ using UnityEngine;
 
 public abstract class Item
 {
-    public readonly ItemData Data;
+    public readonly ItemData ReferenceData;
     public readonly Inventory Inventory;
     public string Name { get; private set; }
     public string Description { get; private set; }
     public int Quantity { get; private set; }
 
-    protected Item(ItemData data, Inventory inventory)
+    protected Item(ItemData referenceData, Inventory inventory)
     {
-        Data = data;
-        Name = Data.Name;
-        Description = Data.Description;
+        ReferenceData = referenceData;
+        Name = ReferenceData.Name;
+        Description = ReferenceData.Description;
         Quantity = 1;
         Inventory = inventory;
     }
@@ -29,5 +29,5 @@ public abstract class Item
         Quantity--;
     }
 
-    public abstract void Use();
+    public abstract void Use(Battler user);
 }
