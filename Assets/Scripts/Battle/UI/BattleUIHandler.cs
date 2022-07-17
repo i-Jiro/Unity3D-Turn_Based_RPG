@@ -129,12 +129,10 @@ public class BattleUIHandler : MonoBehaviour
             if (ability.GetType() == typeof(AttackAbility))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
-                Debug.Log(abilityName + "is an Attack Ability.");
             }
             else if(ability.GetType() == typeof(SupportAbility))
             {
                 _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _abilitiesMenu.SetActive(false); });
-                Debug.Log(abilityName + " is a Support Ability.");
             }
             else
             {
