@@ -154,6 +154,24 @@ public abstract class Battler : MonoBehaviour
         currentMana -= manaUsed;
     }
 
+    public virtual void RecoverHealth(float amountRecovered)
+    {
+        currentHealth += amountRecovered;
+        if (currentHealth > maxHealthStat.Value)
+        {
+            currentHealth = maxHealthStat.Value;
+        }
+    }
+
+    public virtual void RecoverMana(float amountRecovered)
+    {
+        currentMana += amountRecovered;
+        if (currentMana > maxManaStat.Value)
+        {
+            currentMana = maxManaStat.Value;
+        }
+    }
+
     protected virtual bool Evade()
     {
         bool didEvade = false;
