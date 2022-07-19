@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Test Support
   m_EditorClassIdentifier: 
   AbilityName: Boost
-  baseMagnitude: 1
-  manaCost: 50
+  Multiplier: 1
+  ManaCost: 50
   userParticlePrefab: {fileID: 0}
   targetParticlePrefab: {fileID: 0}
   statusEffectDataList:

@@ -154,6 +154,12 @@ public abstract class Battler : MonoBehaviour
         currentMana -= manaUsed;
     }
 
+    public virtual void UseItem(Item item, Battler user)
+    {
+        item.Use(user);
+        EndTurn();
+    }
+
     public virtual void RecoverHealth(float amountRecovered)
     {
         currentHealth += amountRecovered;

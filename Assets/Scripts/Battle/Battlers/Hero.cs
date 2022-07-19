@@ -138,6 +138,18 @@ public class Hero : Battler
         UpdateManaUI();
     }
 
+    public override void RecoverHealth(float amountRecovered)
+    {
+        base.RecoverHealth(amountRecovered);
+        UpdateHealthUI();
+    }
+
+    public override void RecoverMana(float amountRecovered)
+    {
+        base.RecoverMana(amountRecovered);
+        UpdateManaUI();
+    }
+
     protected override void StartTurn()
     {
         StartCoroutine(MoveLeft());
@@ -166,7 +178,7 @@ public class Hero : Battler
 
     protected void UpdateHealthUI()
     {
-        OnTurnTimeChanged?.Invoke(currentHealth);
+        OnHealthChanged?.Invoke(currentHealth);
     }
     protected void UpdateTimeUI()
     {

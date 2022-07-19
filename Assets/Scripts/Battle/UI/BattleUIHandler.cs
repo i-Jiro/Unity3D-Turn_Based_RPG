@@ -15,8 +15,11 @@ public class BattleUIHandler : MonoBehaviour
     [SerializeField] Button _attackButton;
     [SerializeField] Button _defendButton;
     [SerializeField] Button _abilitiesButton;
+    [SerializeField] Button _itemsButton;
     [SerializeField] GameObject _actionMenu;
     [SerializeField] GameObject _abilitiesMenu;
+    [SerializeField] GameObject _itemsMenu;
+    [SerializeField] List<Button> _itemsButtons;
     [SerializeField] List<Button> _abilityButtons;
     [SerializeField] List<HeroUIController> _heroInfoControllers;
     [SerializeField] GameObject _selector;
@@ -26,7 +29,7 @@ public class BattleUIHandler : MonoBehaviour
     private bool _isSelectingEnemy = false;
     private bool _isSelectingAlly = false;
     private bool _isInAbilityMenu = false;
-    private int _index;
+    private int _selectorIndex;
     private Ability _selectedAbility;
     private UISoundHandler _soundHandler;
 
@@ -56,6 +59,7 @@ public class BattleUIHandler : MonoBehaviour
             _attackButton.onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Attack); });
             _defendButton.onClick.AddListener(BattleManager.Instance.ChoseDefend);
             _abilitiesButton.onClick.AddListener(DisplayAbilitiesMenu);
+            _itemsButton.onClick.AddListener(DisplayItemsMenu);
             InitializeHeroUI();
         }
         else
@@ -89,6 +93,33 @@ public class BattleUIHandler : MonoBehaviour
             _abilitiesMenu.SetActive(false);
             _actionMenu.SetActive(true);
             _isInAbilityMenu = false;
+        }
+    }
+
+    private void DisplayItemsMenu()
+    {
+        _actionMenu.gameObject.SetActive(false);
+        _itemsMenu.gameObject.SetActive(true);
+        Hero currentHero = BattleManager.Instance.GetCurrentHero();
+
+        foreach (var button in _itemsButtons)
+        {
+            button.onClick.RemoveAllListeners();
+        }
+        
+        for (int i = 0; i < _itemsButtons.Count; i++)
+        {
+            //Buttons that are not assigned an item are hidden.
+            if (i >= PartyManager.Instance.Inventory.Items.Count)
+            {
+               _itemsButtons[i].gameObject.SetActive(false);
+                continue;
+            }
+
+            Item item = PartyManager.Instance.Inventory.Items[i];
+            string itemName = item.Name;
+            _itemsButtons[i].gameObject.GetComponentInChildren<TextMeshProUGUI>().SetText(itemName);
+            _itemsButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseUseItem(item, currentHero); _itemsMenu.gameObject.SetActive(false);});
         }
     }
 
@@ -154,7 +185,7 @@ public class BattleUIHandler : MonoBehaviour
         _selector.gameObject.SetActive(true);
         _isSelectingEnemy = true;
         _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(_selectorOffsetX, 0, _selectorOffsetZ);
-        _index = 0;
+        _selectorIndex = 0;
     }
     //Overload for abilities that require targeting enemies.
     private void StartSelectEnemy(SelectorType type, Ability ability)
@@ -172,23 +203,23 @@ public class BattleUIHandler : MonoBehaviour
             List<Enemy> enemies = BattleManager.Instance.enemies;
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                _index++;
+                _selectorIndex++;
                 _soundHandler.PlayHighBeep();
-                if (_index >= enemies.Count)
+                if (_selectorIndex >= enemies.Count)
                 {
-                    _index = 0;
+                    _selectorIndex = 0;
                 }
-                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffsetX, 0, _selectorOffsetZ);
+                _selector.transform.position = enemies[_selectorIndex].gameObject.transform.position + new Vector3(_selectorOffsetX, 0, _selectorOffsetZ);
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                _index--;
+                _selectorIndex--;
                 _soundHandler.PlayLowBeep();
-                if (_index < 0)
+                if (_selectorIndex < 0)
                 {
-                    _index = enemies.Count - 1;
+                    _selectorIndex = enemies.Count - 1;
                 }
-                _selector.transform.position = enemies[_index].gameObject.transform.position + new Vector3(_selectorOffsetX, 0 , _selectorOffsetZ);
+                _selector.transform.position = enemies[_selectorIndex].gameObject.transform.position + new Vector3(_selectorOffsetX, 0 , _selectorOffsetZ);
             }
             else if (Input.GetKeyDown(KeyCode.Space)) //Confirm select current enemy to attack.
             {
@@ -198,11 +229,11 @@ public class BattleUIHandler : MonoBehaviour
                 {
                     case SelectorType.Attack:
                         if(OnSelectEnemyAttack != null)
-                            OnSelectEnemyAttack.Invoke(enemies[_index]);
+                            OnSelectEnemyAttack.Invoke(enemies[_selectorIndex]);
                         break;
                     case SelectorType.Ability:
                         if (OnSelectEnemyAbility != null)
-                            OnSelectEnemyAbility.Invoke(enemies[_index], _selectedAbility);
+                            OnSelectEnemyAbility.Invoke(enemies[_selectorIndex], _selectedAbility);
                         break;
                     default:
                         Debug.LogError("In unknown selector in Battle UI Handler!");

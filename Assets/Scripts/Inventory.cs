@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Inventory
 {
+    //Temporary list to preload items into the inventory for testing.
+    public List<ItemData> preloadItems;
     private List<Item> _items;
     private readonly Dictionary<ItemData, Item> _itemDictionary;
-    public IReadOnlyList<Item> Items;
+    public readonly IReadOnlyList<Item> Items;
 
     public Inventory()
     {
