@@ -98,7 +98,6 @@ public class BattleUIHandler : MonoBehaviour
 
     private void DisplayItemsMenu()
     {
-        _actionMenu.gameObject.SetActive(false);
         _itemsMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
 
@@ -118,7 +117,19 @@ public class BattleUIHandler : MonoBehaviour
 
             Item item = PartyManager.Instance.Inventory.Items[i];
             string itemName = item.Name;
-            _itemsButtons[i].gameObject.GetComponentInChildren<TextMeshProUGUI>().SetText(itemName);
+            string itemQuantity = "x" + item.Quantity;
+            var itemTexts = _itemsButtons[i].GetComponentsInChildren<TextMeshProUGUI>();
+            foreach (TextMeshProUGUI text in itemTexts)
+            {
+                if(text.gameObject.CompareTag("UI_Name"))
+                {
+                    text.SetText(itemName);
+                }
+                else if (text.gameObject.CompareTag("UI_Quantity"))
+                {
+                    text.SetText(itemQuantity);
+                }
+            }
             _itemsButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseUseItem(item, currentHero); _itemsMenu.gameObject.SetActive(false);});
         }
     }
