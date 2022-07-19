@@ -14,6 +14,7 @@ public class HeroAudioController : MonoBehaviour
     [SerializeField] List<AudioClip> _guardVoiceClips;
     [SerializeField] List<AudioClip> _startGuardVoiceClips;
     [SerializeField] List<AudioClip> _selfBuffVoiceClips;
+    [SerializeField] List<AudioClip> _itemUseVoiceClips;
 
 
     private void Awake()
@@ -73,6 +74,13 @@ public class HeroAudioController : MonoBehaviour
         _audioSource.Stop();
         int index = Random.Range(0, _selfBuffVoiceClips.Count);
         _audioSource.PlayOneShot(_selfBuffVoiceClips[index]);
+    }
+
+    public void PlayItemUseVoice()
+    {
+        _audioSource.Stop();
+        int index = Random.Range(0, _itemUseVoiceClips.Count);
+        _audioSource.PlayOneShot(_itemUseVoiceClips[index]);
     }
 
 }

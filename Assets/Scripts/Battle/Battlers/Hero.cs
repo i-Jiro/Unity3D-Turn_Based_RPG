@@ -70,7 +70,6 @@ public class Hero : Battler
     //For abilities that target self
     public virtual void UseAbility(Ability ability)
     {
-        Debug.Log(charName + " used " + ability.Name);
         audioController.PlaySelfBuffVoice();
         animationController.PlayBuff();
         SupportAbility buffAbility = ability as SupportAbility;
@@ -138,6 +137,13 @@ public class Hero : Battler
         UpdateManaUI();
     }
 
+    public override void UseItem(Item item, Battler user)
+    {
+        item.Use(user);
+        audioController.PlayItemUseVoice();
+        animationController.PlayUseItem();
+    }
+
     public override void RecoverHealth(float amountRecovered)
     {
         base.RecoverHealth(amountRecovered);
@@ -161,6 +167,7 @@ public class Hero : Battler
         OnStartTurn?.Invoke(this);
     }
 
+    //Called by Animation Events at the end of an animation
     protected override void EndTurn()
     {
         TickStatusEffects();

@@ -4579,7 +4579,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1540627491
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6934,6 +6934,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _itemUseVoiceClips.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _itemUseVoiceClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: ef672d06a1425f34087f79dd7d4c7d03, type: 3}
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _itemUseVoiceClips.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: fafc5c5a35f1d7d47b7ede35fa6be90b, type: 3}
+    - target: {fileID: 2432640122360567309, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: _itemUseVoiceClips.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: ae33e67b8e1fc8a4ea0462ebe55931a5, type: 3}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: speedStat.BaseValue
       value: 50
