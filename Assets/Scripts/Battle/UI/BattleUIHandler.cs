@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Collections;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(UISoundHandler))]
 public class BattleUIHandler : MonoBehaviour
 {
     public static BattleUIHandler Instance { get; private set; }
 
-    enum SelectorType {Attack, Ability}
+    private enum SelectorType {Attack, Ability}
     private SelectorType _selectorType;
 
     [SerializeField] Button _attackButton;
@@ -17,21 +19,21 @@ public class BattleUIHandler : MonoBehaviour
     [SerializeField] Button _abilitiesButton;
     [SerializeField] Button _itemsButton;
     [SerializeField] GameObject _actionMenu;
-    [SerializeField] GameObject _abilitiesMenu;
-    [SerializeField] GameObject _itemsMenu;
-    [SerializeField] List<Button> _itemsButtons;
-    [SerializeField] List<Button> _abilityButtons;
+    [SerializeField] GameObject _subMenu;
     [SerializeField] List<HeroUIController> _heroInfoControllers;
     [SerializeField] GameObject _selector;
     [SerializeField] float _selectorOffsetX = 2f;
     [SerializeField] float _selectorOffsetZ = -1f;
+    [SerializeField] GameObject _subMenuButtonPrefab;
+    [SerializeField] private int _startingButtonPoolSize;
 
     private bool _isSelectingEnemy = false;
     private bool _isSelectingAlly = false;
-    private bool _isInAbilityMenu = false;
+    private bool _isInSubMenu = false;
     private int _selectorIndex;
     private Ability _selectedAbility;
     private UISoundHandler _soundHandler;
+    private readonly List<Button> _subMenuButtonPool = new List<Button>();
 
     public delegate void AttackSelectEnemyEvent(Enemy enemy);
     public static event AttackSelectEnemyEvent OnSelectEnemyAttack;
@@ -61,6 +63,7 @@ public class BattleUIHandler : MonoBehaviour
             _abilitiesButton.onClick.AddListener(DisplayAbilitiesMenu);
             _itemsButton.onClick.AddListener(DisplayItemsMenu);
             InitializeHeroUI();
+            InitializeButtonPool(_startingButtonPoolSize);
         }
         else
         {
@@ -84,41 +87,64 @@ public class BattleUIHandler : MonoBehaviour
         }
     }
 
+    private void InitializeButtonPool(int startingSize)
+    {
+        for (int i = 0; i < startingSize; i++)
+        {
+            var button = Instantiate(_subMenuButtonPrefab, _subMenu.transform, true);
+            _subMenuButtonPool.Add(button.GetComponent<Button>());
+        }
+    }
+    
     private void Update()
     {
         MoveEnemySelector();
-        //If in the abilities menu, pressing escape will take you back to the action menu.
-        if(_isInAbilityMenu == true && Input.GetKeyDown(KeyCode.Escape))
+        //If in the sub menu, pressing escape will take you back to the action menu.
+        if(_isInSubMenu && Input.GetKeyDown(KeyCode.Escape))
         {
-            _abilitiesMenu.SetActive(false);
+            _subMenu.SetActive(false);
             _actionMenu.SetActive(true);
-            _isInAbilityMenu = false;
+            _isInSubMenu = false;
         }
     }
 
+    //Display a menu showing available usable items in the party's inventory.
     private void DisplayItemsMenu()
     {
-        _itemsMenu.gameObject.SetActive(true);
+        _isInSubMenu = true;
+        _subMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
 
-        foreach (var button in _itemsButtons)
+        foreach (var button in _subMenuButtonPool)
         {
             button.onClick.RemoveAllListeners();
         }
+
+        //Creates more buttons if there's not enough button in the pool.
+        if (PartyManager.Instance.Inventory.Items.Count > _subMenuButtonPool.Count)
+        {
+            int difference = PartyManager.Instance.Inventory.Items.Count - _subMenuButtonPool.Count;
+            for (int i = 0; i < difference; i++)
+            {
+                var button = Instantiate(_subMenuButtonPrefab, _subMenu.transform, true);
+                _subMenuButtonPool.Add(button.GetComponent<Button>());
+            }
+        }
         
-        for (int i = 0; i < _itemsButtons.Count; i++)
+        for (int i = 0; i < _subMenuButtonPool.Count; i++)
         {
             //Buttons that are not assigned an item are hidden.
             if (i >= PartyManager.Instance.Inventory.Items.Count)
             {
-               _itemsButtons[i].gameObject.SetActive(false);
+               _subMenuButtonPool[i].gameObject.SetActive(false);
                 continue;
             }
 
             Item item = PartyManager.Instance.Inventory.Items[i];
             string itemName = item.Name;
             string itemQuantity = "x" + item.Quantity;
-            var itemTexts = _itemsButtons[i].GetComponentsInChildren<TextMeshProUGUI>();
+            var itemTexts = _subMenuButtonPool[i].GetComponentsInChildren<TextMeshProUGUI>();
+            //Set text on the button.
             foreach (TextMeshProUGUI text in itemTexts)
             {
                 if(text.gameObject.CompareTag("UI_Name"))
@@ -130,51 +156,74 @@ public class BattleUIHandler : MonoBehaviour
                     text.SetText(itemQuantity);
                 }
             }
-            _itemsButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseUseItem(item, currentHero); _itemsMenu.gameObject.SetActive(false);});
+            _subMenuButtonPool[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseUseItem(item, currentHero); _subMenu.gameObject.SetActive(false);ToggleActionMenu(false); });
         }
     }
 
-    //Display abilities menu of availiable skills for the hero
+    //Display abilities menu of available skills for the hero
     private void DisplayAbilitiesMenu()
     {
-        _isInAbilityMenu = true;
-        _actionMenu.gameObject.SetActive(false);
-        _abilitiesMenu.gameObject.SetActive(true);
+        _isInSubMenu = true;
+        _subMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
 
         //Clears button for reuse.
-        foreach(Button button in _abilityButtons)
+        foreach(Button button in _subMenuButtonPool)
         {
            button.onClick.RemoveAllListeners();
         }
 
-        for(int i = 0; i < _abilityButtons.Count; i++)
+        //Creates more buttons if there's not enough button in the pool.
+        if (PartyManager.Instance.Inventory.Items.Count > currentHero.Abilities.Count)
+        {
+            int difference = PartyManager.Instance.Inventory.Items.Count - currentHero.Abilities.Count;
+            for (int i = 0; i < difference; i++)
+            {
+                var button = Instantiate(_subMenuButtonPrefab, _subMenu.transform, true);
+                _subMenuButtonPool.Add(button.GetComponent<Button>());
+            }
+        }
+
+        for(int i = 0; i < _subMenuButtonPool.Count; i++)
         {
             //Buttons that are not assigned an ability are hidden.
             if(i >= currentHero.Abilities.Count)
             {
-                _abilityButtons[i].gameObject.SetActive(false);
+                _subMenuButtonPool[i].gameObject.SetActive(false);
                 continue;
             }
 
             Ability ability = currentHero.Abilities[i];
             string abilityName = ability.Name;
             float manaCost = ability.ManaCost;
-            _abilityButtons[i].GetComponentInChildren<TextMeshProUGUI>().SetText(abilityName);
+
+            //Set text on the button.
+            var texts = _subMenuButtonPool[i].GetComponentsInChildren<TextMeshProUGUI>();
+            foreach (TextMeshProUGUI text in texts)
+            {
+                if(text.gameObject.CompareTag("UI_Name"))
+                {
+                    text.SetText(abilityName);
+                }
+                else if (text.gameObject.CompareTag("UI_Quantity"))
+                {
+                    text.SetText(manaCost + " MP");
+                }
+            }
 
             if (manaCost > currentHero.CurrentMana)
             {
-                _abilityButtons[i].interactable = false;
+                _subMenuButtonPool[i].interactable = false;
             }
 
             //Sort out abilities into buttons based on their ability script subclass type.
             if (ability.GetType() == typeof(AttackAbility))
             {
-                _abilityButtons[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
+                _subMenuButtonPool[i].onClick.AddListener(delegate { StartSelectEnemy(SelectorType.Ability, ability); });
             }
             else if(ability.GetType() == typeof(SupportAbility))
             {
-                _abilityButtons[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _abilitiesMenu.SetActive(false); });
+                _subMenuButtonPool[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _subMenu.SetActive(false); ToggleActionMenu(false); });
             }
             else
             {
@@ -201,7 +250,7 @@ public class BattleUIHandler : MonoBehaviour
     //Overload for abilities that require targeting enemies.
     private void StartSelectEnemy(SelectorType type, Ability ability)
     {
-        _abilitiesMenu.gameObject.SetActive(false);
+        _subMenu.gameObject.SetActive(false);
         _selectedAbility = ability;
         StartSelectEnemy(type);
     }
