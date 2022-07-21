@@ -32,6 +32,9 @@ public abstract class Battler : MonoBehaviour
 
     protected float turnTimer = 0;
     protected bool isTurnTimerActive = false;
+    
+    public delegate void TakeDamageEventHandler(Battler battler, float damage);
+    public event TakeDamageEventHandler TookDamage;
 
     public string Name
     {
@@ -76,11 +79,11 @@ public abstract class Battler : MonoBehaviour
         currentHealth = maxHealthStat.Value;
         currentMana = maxManaStat.Value;
         isTurnTimerActive = true;
-        if (FindObjectOfType<BattleManager>())
+        if (BattleManager.Instance != null)
         {
             BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
         }
-        else { Debug.LogError(gameObject.name + ": Can't find Battle Manager on scnene!"); }
+        else { Debug.LogError(gameObject.name + ": Can't find Battle Manager on scene!"); }
         InitializeAbilities();
     }
 
@@ -147,6 +150,12 @@ public abstract class Battler : MonoBehaviour
         if (damage < 0)
             damage = 0;
         currentHealth -= damage;
+        OnTakeDamage(this,damage);
+    }
+
+    protected virtual void OnTakeDamage(Battler battler, float damage)
+    {
+        TookDamage?.Invoke(battler, damage);
     }
 
     protected virtual void UseMana(float manaUsed)

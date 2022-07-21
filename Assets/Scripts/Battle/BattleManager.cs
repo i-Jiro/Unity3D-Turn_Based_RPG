@@ -53,7 +53,7 @@ public class BattleManager : MonoBehaviour
         }
         foreach(Enemy enemy in enemies)
         {
-            enemy.OnTakeActiveTurn += TakeActiveTurn;
+            enemy.OnStartTurn += StartTurn;
             enemy.OnEndTurn += EndTurn;
         }
     }
@@ -92,7 +92,7 @@ public class BattleManager : MonoBehaviour
         BattleUIHandler.Instance.ToggleActionMenu(true);
     }
 
-    public void TakeActiveTurn(Enemy enemy)
+    public void StartTurn(Enemy enemy)
     {
          _isActiveTurn = true;
         OnActiveTurnChanged.Invoke(_isActiveTurn);
