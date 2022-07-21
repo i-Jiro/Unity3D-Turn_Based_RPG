@@ -115,10 +115,7 @@ public class BattleUIHandler : MonoBehaviour
         _subMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
 
-        foreach (var button in _subMenuButtonPool)
-        {
-            button.onClick.RemoveAllListeners();
-        }
+        ResetSubButtons();
 
         //Creates more buttons if there's not enough button in the pool.
         if (PartyManager.Instance.Inventory.Items.Count > _subMenuButtonPool.Count)
@@ -160,19 +157,25 @@ public class BattleUIHandler : MonoBehaviour
         }
     }
 
+    //Clears button for reuse.
+    private void ResetSubButtons()
+    {
+        foreach(Button button in _subMenuButtonPool)
+        {
+            button.onClick.RemoveAllListeners();
+            button.gameObject.SetActive(true);
+        }
+    }
+
     //Display abilities menu of available skills for the hero
     private void DisplayAbilitiesMenu()
     {
         _isInSubMenu = true;
         _subMenu.gameObject.SetActive(true);
         Hero currentHero = BattleManager.Instance.GetCurrentHero();
-
-        //Clears button for reuse.
-        foreach(Button button in _subMenuButtonPool)
-        {
-           button.onClick.RemoveAllListeners();
-        }
-
+        
+        ResetSubButtons();
+        
         //Creates more buttons if there's not enough button in the pool.
         if (PartyManager.Instance.Inventory.Items.Count > currentHero.Abilities.Count)
         {
