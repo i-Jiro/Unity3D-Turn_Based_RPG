@@ -40,15 +40,15 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         _isFightActive = true;
-        Intialize();
+        Initialize();
     }
 
     //Initialize listeners for events from heroes and enemies that are deployed at start.
-    private void Intialize()
+    private void Initialize()
     {
         foreach(Hero hero in heroes)
         {
-            hero.OnStartTurn += TakeActiveTurn;
+            hero.OnStartTurn += StartTurn;
             hero.OnEndTurn += EndTurn;
         }
         foreach(Enemy enemy in enemies)
@@ -82,9 +82,13 @@ public class BattleManager : MonoBehaviour
     {
         _currentHero.Defend();
     }
+    public Hero GetCurrentHero()
+    {
+        return _currentHero;
+    }
 
     // When a turn is claimed by a character, pause everyone else's turn meter.
-    public void TakeActiveTurn(Hero hero)
+    private void StartTurn(Hero hero)
     {
         _currentHero = hero;
         _isActiveTurn = true;
@@ -92,18 +96,13 @@ public class BattleManager : MonoBehaviour
         BattleUIHandler.Instance.ToggleActionMenu(true);
     }
 
-    public void StartTurn(Enemy enemy)
+    private void StartTurn(Enemy enemy)
     {
          _isActiveTurn = true;
         OnActiveTurnChanged.Invoke(_isActiveTurn);
     }
 
-    public Hero GetCurrentHero()
-    {
-        return _currentHero;
-    }
-
-    public void EndTurn()
+    private void EndTurn()
     {
         _isActiveTurn = false;
         //Micro delay to allow for any remaining animations to finish.
