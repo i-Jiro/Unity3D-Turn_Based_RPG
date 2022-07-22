@@ -40,20 +40,20 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         _isFightActive = true;
-        Intialize();
+        Initialize();
     }
 
     //Initialize listeners for events from heroes and enemies that are deployed at start.
-    private void Intialize()
+    private void Initialize()
     {
         foreach(Hero hero in heroes)
         {
-            hero.OnStartTurn += TakeActiveTurn;
+            hero.OnStartTurn += StartTurn;
             hero.OnEndTurn += EndTurn;
         }
         foreach(Enemy enemy in enemies)
         {
-            enemy.OnTakeActiveTurn += TakeActiveTurn;
+            enemy.OnStartTurn += StartTurn;
             enemy.OnEndTurn += EndTurn;
         }
     }
@@ -65,7 +65,6 @@ public class BattleManager : MonoBehaviour
 
     public void ChoseAbility(Ability ability)
     {
-        Debug.Log(ability.Name + " activated.");
         _currentHero.UseAbility(ability);
     }
 
@@ -74,13 +73,22 @@ public class BattleManager : MonoBehaviour
         _currentHero.UseAbility(enemy, ability);
     }
 
+    public void ChoseUseItem(Item item, Battler target)
+    {
+        _currentHero.UseItem(item, target);
+    }
+
     public void ChoseDefend()
     {
         _currentHero.Defend();
     }
+    public Hero GetCurrentHero()
+    {
+        return _currentHero;
+    }
 
     // When a turn is claimed by a character, pause everyone else's turn meter.
-    public void TakeActiveTurn(Hero hero)
+    private void StartTurn(Hero hero)
     {
         _currentHero = hero;
         _isActiveTurn = true;
@@ -88,18 +96,13 @@ public class BattleManager : MonoBehaviour
         BattleUIHandler.Instance.ToggleActionMenu(true);
     }
 
-    public void TakeActiveTurn(Enemy enemy)
+    private void StartTurn(Enemy enemy)
     {
          _isActiveTurn = true;
         OnActiveTurnChanged.Invoke(_isActiveTurn);
     }
 
-    public Hero GetCurrentHero()
-    {
-        return _currentHero;
-    }
-
-    public void EndTurn()
+    private void EndTurn()
     {
         _isActiveTurn = false;
         //Micro delay to allow for any remaining animations to finish.

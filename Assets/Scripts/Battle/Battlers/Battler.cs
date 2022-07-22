@@ -32,6 +32,13 @@ public abstract class Battler : MonoBehaviour
 
     protected float turnTimer = 0;
     protected bool isTurnTimerActive = false;
+    
+    public delegate void DisplayPopUpEventHandler(Battler battler, string message, PopUpType type);
+    public event DisplayPopUpEventHandler DisplayPopUp;
+
+    public delegate void DisplayAlertMessage(string message);
+
+    public event DisplayAlertMessage DisplayAlert;
 
     public string Name
     {
@@ -76,11 +83,11 @@ public abstract class Battler : MonoBehaviour
         currentHealth = maxHealthStat.Value;
         currentMana = maxManaStat.Value;
         isTurnTimerActive = true;
-        if (FindObjectOfType<BattleManager>())
+        if (BattleManager.Instance != null)
         {
             BattleManager.OnActiveTurnChanged += ToggleTurnTimer;
         }
-        else { Debug.LogError(gameObject.name + ": Can't find Battle Manager on scnene!"); }
+        else { Debug.LogError(gameObject.name + ": Can't find Battle Manager on scene!"); }
         InitializeAbilities();
     }
 
@@ -140,6 +147,7 @@ public abstract class Battler : MonoBehaviour
         if (Evade())
         {
             Debug.Log(gameObject.name + " evaded.");
+            OnDisplayPopUp(this, "MISSED", PopUpType.Damage );
             return;
         }
 
@@ -147,11 +155,39 @@ public abstract class Battler : MonoBehaviour
         if (damage < 0)
             damage = 0;
         currentHealth -= damage;
+        OnDisplayPopUp(this, damage.ToString(), PopUpType.Damage );
     }
 
     protected virtual void UseMana(float manaUsed)
     {
         currentMana -= manaUsed;
+    }
+
+    public virtual void UseItem(Item item, Battler user)
+    {
+        OnDisplayAlert(item.Name);
+        item.Use(user);
+        EndTurn();
+    }
+
+    public virtual void RecoverHealth(float amountRecovered)
+    {
+        OnDisplayPopUp(this, amountRecovered.ToString(), PopUpType.Health);
+        currentHealth += amountRecovered;
+        if (currentHealth > maxHealthStat.Value)
+        {
+            currentHealth = maxHealthStat.Value;
+        }
+    }
+
+    public virtual void RecoverMana(float amountRecovered)
+    {
+        OnDisplayPopUp(this, amountRecovered.ToString(), PopUpType.Mana);
+        currentMana += amountRecovered;
+        if (currentMana > maxManaStat.Value)
+        {
+            currentMana = maxManaStat.Value;
+        }
     }
 
     protected virtual bool Evade()
@@ -219,5 +255,13 @@ public abstract class Battler : MonoBehaviour
     {
         speedStat.RemoveAllModifierFromSource(source);
     }
+    protected virtual void OnDisplayAlert(string message)
+    {
+        DisplayAlert?.Invoke(message);
+    }
 
+    protected virtual void OnDisplayPopUp(Battler battler, string message, PopUpType type)
+    {
+        DisplayPopUp?.Invoke(battler, message, type);
+    }
 }

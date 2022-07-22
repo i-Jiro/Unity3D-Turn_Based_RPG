@@ -18,6 +18,11 @@ public class HeroAnimationController : MonoBehaviour
         _animator.SetBool("isReady", false);
     }
 
+    public void PlayUseItem()
+    {
+        _animator.SetTrigger("ItemTrigger");
+    }
+
     public void PlayAttack()
     {
         _animator.SetTrigger("AttackTrigger");

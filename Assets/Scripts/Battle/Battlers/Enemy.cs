@@ -6,28 +6,24 @@ public class Enemy : Battler
 {
     protected List<Hero> heroes;
 
-    public delegate void EventTakeTurn(Enemy enemy);
-    public event EventTakeTurn OnTakeActiveTurn;
-    public delegate void EventEndTurn();
-    public event EventEndTurn OnEndTurn;
+    public delegate void StartTurnEventHandler(Enemy enemy);
+    public event StartTurnEventHandler OnStartTurn;
+    public delegate void EndTurnEventHandler();
+    public event EndTurnEventHandler OnEndTurn;
 
     protected override void Start()
     {
         base.Start();
         heroes = BattleManager.Instance.heroes;
     }
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
-
+    
     protected virtual void Attack(Hero hero)
     {
         Debug.Log(gameObject.name + " attacked " + hero.gameObject.name);
+        OnDisplayAlert("Attack");
         hero.TakeDamage(CalculateDamage(baseDamageMultiplier));
-        EndTurn();
+        StartCoroutine(DelayEndTurn(1));
+        //EndTurn();
     }
 
     protected virtual Hero PickRandomHero()
@@ -39,14 +35,14 @@ public class Enemy : Battler
 
     protected override void StartTurn()
     {
-        OnTakeActiveTurn.Invoke(this);
+        OnStartTurn?.Invoke(this);
         Attack(PickRandomHero());
     }
 
     protected override void EndTurn()
     {
         turnTimer = 0;
-        OnEndTurn.Invoke();
+        OnEndTurn?.Invoke();
     }
 
     protected void OnDestroy()
@@ -55,5 +51,11 @@ public class Enemy : Battler
         {
             BattleManager.OnActiveTurnChanged -= ToggleTurnTimer;
         }
+    }
+
+    public IEnumerator DelayEndTurn(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        EndTurn();
     }
 }

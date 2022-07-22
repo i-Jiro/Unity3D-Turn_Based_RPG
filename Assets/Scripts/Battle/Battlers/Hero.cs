@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -14,7 +15,9 @@ public class Hero : Battler
 
     private HeroAnimationController animationController;
     private HeroAudioController audioController;
-
+    
+    protected float rawDamage;
+    
     public delegate void HealthEventHandler(float health);
     public event HealthEventHandler OnHealthChanged;
     public delegate void TurnTimerEventHandler(float time);
@@ -22,25 +25,19 @@ public class Hero : Battler
     public delegate void ManaEventHandler(float mana);
     public event ManaEventHandler OnManaChanged;
 
-    public delegate void EventTakeTurn(Hero hero);
-    public event EventTakeTurn OnStartTurn;
-    public delegate void EventEndTurn();
-    public event EventEndTurn OnEndTurn;
+    public delegate void StartTurnEventHandler(Hero hero);
+    public event StartTurnEventHandler OnStartTurn;
+    public delegate void EndTurnEventHandler();
+    public event EndTurnEventHandler OnEndTurn;
+
+    private delegate void DealDamageCallback(float damage);
+
+    private DealDamageCallback _dealDamageCallback;
 
     protected virtual void Awake()
     {
         animationController = GetComponent<HeroAnimationController>();
         audioController = GetComponent<HeroAudioController>();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
     }
 
     protected override void TickTurnTimer()
@@ -51,31 +48,40 @@ public class Hero : Battler
 
     public virtual void Attack(Enemy enemy)
     {
+        OnDisplayAlert("Attack");
+        rawDamage = CalculateDamage(baseDamageMultiplier);
+        _dealDamageCallback = enemy.TakeDamage;
         audioController.PlayAttackVoice();
         animationController.PlayAttack();
-        Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
-        enemy.TakeDamage(CalculateDamage(baseDamageMultiplier));
     }
 
-    //For abilities that target enemys
+    //Called on by an animation event at the point of impact to deal damage to enemy.
+    protected virtual void OnHitAnimation()
+    {
+        _dealDamageCallback?.Invoke(rawDamage);
+    }
+
+    //For abilities that target enemies
     public virtual void UseAbility(Enemy enemyTarget, Ability ability)
     {
+        AttackAbility attackAbility = ability as AttackAbility;
+        attackAbility.Trigger(this, enemyTarget, out rawDamage);
+        _dealDamageCallback = enemyTarget.TakeDamage;
+        UseMana(ability.ManaCost);
+        OnDisplayAlert(ability.Name);
         audioController.PlaySpecialAttackVoice();
         animationController.PlaySpecialAttack();
-        AttackAbility attackAbility = ability as AttackAbility;
-        attackAbility.Trigger(this, enemyTarget);
-        UseMana(ability.ManaCost);
     }
 
     //For abilities that target self
     public virtual void UseAbility(Ability ability)
     {
-        Debug.Log(charName + " used " + ability.Name);
-        audioController.PlaySelfBuffVoice();
-        animationController.PlayBuff();
         SupportAbility buffAbility = ability as SupportAbility;
         buffAbility.Trigger(this);
         UseMana(ability.ManaCost);
+        OnDisplayAlert(ability.Name);
+        audioController.PlaySelfBuffVoice();
+        animationController.PlayBuff();
     }
 
     //For abilities that target party members
@@ -92,6 +98,7 @@ public class Hero : Battler
 
     public virtual void Defend()
     {
+        OnDisplayAlert("Defend");
         audioController.PlayStartGuardVoice();
         isDefending = true;
         AddModifier(defendStanceModifier);
@@ -115,7 +122,7 @@ public class Hero : Battler
         {
             audioController.PlayEvadeVoice();
             animationController.PlayEvade();
-            Debug.Log(gameObject.name + " Evaded.");
+            OnDisplayPopUp(this, "Missed", PopUpType.Damage);
             return;
         }
 
@@ -126,6 +133,7 @@ public class Hero : Battler
         if (damage < 0)
             damage = 0;
         currentHealth -= damage;
+        OnDisplayPopUp(this,damage.ToString(), PopUpType.Damage);
         UpdateHealthUI();
     }
 
@@ -135,6 +143,27 @@ public class Hero : Battler
             currentMana = maxManaStat.Value;
         else
             currentMana += manaRegenRate;
+        OnDisplayPopUp(this,manaRegenRate.ToString(), PopUpType.Mana);
+        UpdateManaUI();
+    }
+
+    public override void UseItem(Item item, Battler user)
+    {
+        OnDisplayAlert(item.Name);
+        item.Use(user);
+        audioController.PlayItemUseVoice();
+        animationController.PlayUseItem();
+    }
+
+    public override void RecoverHealth(float amountRecovered)
+    {
+        base.RecoverHealth(amountRecovered);
+        UpdateHealthUI();
+    }
+
+    public override void RecoverMana(float amountRecovered)
+    {
+        base.RecoverMana(amountRecovered);
         UpdateManaUI();
     }
 
@@ -149,6 +178,7 @@ public class Hero : Battler
         OnStartTurn?.Invoke(this);
     }
 
+    //Called by Animation Events at the end of an animation
     protected override void EndTurn()
     {
         TickStatusEffects();
@@ -166,7 +196,7 @@ public class Hero : Battler
 
     protected void UpdateHealthUI()
     {
-        OnTurnTimeChanged?.Invoke(currentHealth);
+        OnHealthChanged?.Invoke(currentHealth);
     }
     protected void UpdateTimeUI()
     {
