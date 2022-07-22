@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PopUpPooler : MonoBehaviour
 {
     public static PopUpPooler Instance;
     private List<ActionInfoPopUp> _pool;
     [SerializeField] int _startingPoolSize;
-    [SerializeField] GameObject actionInfoPrefab;
+    [SerializeField] ActionInfoPopUp _actionInfoPrefab;
     [SerializeField] private float _offsetPositionX;
     [SerializeField] private float _offsetPositionZ;
 
@@ -32,15 +33,15 @@ public class PopUpPooler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InitialzePool();
+        InitializePool();
         SubscribeToBattlerEvents();
     }
     
-    private void InitialzePool()
+    private void InitializePool()
     {
         for (int i = 0; i < _startingPoolSize; i++)
         {
-            var popUp = Instantiate(actionInfoPrefab, transform.position, Quaternion.identity);
+            var popUp = Instantiate(_actionInfoPrefab, transform.position, Quaternion.identity);
             _pool.Add(popUp.GetComponent<ActionInfoPopUp>());
             popUp.gameObject.SetActive(false);
         }
@@ -50,21 +51,21 @@ public class PopUpPooler : MonoBehaviour
     {
         foreach (var hero in BattleManager.Instance.heroes)
         {
-            hero.TookDamage += TriggerPopUp;
+            hero.DisplayPopUp += TriggerPopUp;
         }
         foreach (var enemy in BattleManager.Instance.enemies)
         {
-            enemy.TookDamage += TriggerPopUp;
+            enemy.DisplayPopUp += TriggerPopUp;
         }
     }
 
-    private void TriggerPopUp(Battler battler, float damage)
+    private void TriggerPopUp(Battler battler, string message, PopUpType type)
     {
         ActionInfoPopUp popUp = GetPooledPopUp();
         Vector3 offsetPosition = new Vector3(_offsetPositionX, 0, _offsetPositionZ);
         popUp.transform.position = battler.transform.position + offsetPosition;
         popUp.gameObject.SetActive(true);
-        popUp.Activate(damage.ToString());
+        popUp.Activate(message, type);
     }
 
     private ActionInfoPopUp GetPooledPopUp()
@@ -76,21 +77,21 @@ public class PopUpPooler : MonoBehaviour
                 return _pool[i];
             }
         }
-        var popUp = Instantiate(actionInfoPrefab, transform.position, Quaternion.identity);
-        _pool.Add(popUp.GetComponent<ActionInfoPopUp>());
+        var popUp = Instantiate(_actionInfoPrefab, transform.position, Quaternion.identity);
+        _pool.Add(popUp);
         
-        return popUp.GetComponent<ActionInfoPopUp>();
+        return popUp;
     }
 
     private void OnDestroy()
     {
         foreach (var hero in BattleManager.Instance.heroes)
         {
-            hero.TookDamage -= TriggerPopUp;
+            hero.DisplayPopUp -= TriggerPopUp;
         }
         foreach (var enemy in BattleManager.Instance.enemies)
         {
-            enemy.TookDamage -= TriggerPopUp;
+            enemy.DisplayPopUp -= TriggerPopUp;
         }
     }
 }

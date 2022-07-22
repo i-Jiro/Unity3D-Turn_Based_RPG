@@ -109,7 +109,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2123be9f6bc5c074ea582eab6461cea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 0.0025
+  _lifeTimeInSeconds: 0.75
+  _fadeSpeed: 0.005
+  _damageColor: {r: 1, g: 1, b: 1, a: 1}
+  _healthRecoverColor: {r: 0.46134478, g: 0.7735849, b: 0.33205768, a: 1}
+  _manaRecoverColor: {r: 0.26072446, g: 0.70030516, b: 0.8773585, a: 1}
 --- !u!1 &2186264664158365967
 GameObject:
   m_ObjectHideFlags: 0

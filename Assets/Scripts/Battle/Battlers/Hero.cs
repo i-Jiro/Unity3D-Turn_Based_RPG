@@ -122,6 +122,7 @@ public class Hero : Battler
         {
             audioController.PlayEvadeVoice();
             animationController.PlayEvade();
+            OnDisplayPopUp(this, "Missed", PopUpType.Damage);
             return;
         }
 
@@ -132,7 +133,7 @@ public class Hero : Battler
         if (damage < 0)
             damage = 0;
         currentHealth -= damage;
-        OnTakeDamage(this,damage);
+        OnDisplayPopUp(this,damage.ToString(), PopUpType.Damage);
         UpdateHealthUI();
     }
 
@@ -142,6 +143,7 @@ public class Hero : Battler
             currentMana = maxManaStat.Value;
         else
             currentMana += manaRegenRate;
+        OnDisplayPopUp(this,manaRegenRate.ToString(), PopUpType.Mana);
         UpdateManaUI();
     }
 

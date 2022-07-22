@@ -4204,7 +4204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startingPoolSize: 5
-  actionInfoPrefab: {fileID: 2186264662383761347, guid: 7c969a90bf13ffe4aa3c22e23190b058, type: 3}
+  actionInfoPrefab: {fileID: -7266282977421429005, guid: 7c969a90bf13ffe4aa3c22e23190b058, type: 3}
   _offsetPositionX: 0
   _offsetPositionZ: -0.5
 --- !u!4 &1715348885
