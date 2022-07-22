@@ -9,6 +9,8 @@ public class PopUpPooler : MonoBehaviour
     private List<ActionInfoPopUp> _pool;
     [SerializeField] int _startingPoolSize;
     [SerializeField] GameObject actionInfoPrefab;
+    [SerializeField] private float _offsetPositionX;
+    [SerializeField] private float _offsetPositionZ;
 
     public PopUpPooler()
     {
@@ -59,7 +61,8 @@ public class PopUpPooler : MonoBehaviour
     private void TriggerPopUp(Battler battler, float damage)
     {
         ActionInfoPopUp popUp = GetPooledPopUp();
-        popUp.transform.position = battler.transform.position;
+        Vector3 offsetPosition = new Vector3(_offsetPositionX, 0, _offsetPositionZ);
+        popUp.transform.position = battler.transform.position + offsetPosition;
         popUp.gameObject.SetActive(true);
         popUp.Activate(damage.ToString());
     }
