@@ -9,6 +9,7 @@ using TMPro;
 public class ActionInfoPopUp : MonoBehaviour
 {
     private TextMeshPro _text;
+    [SerializeField] private float _speed = 0.0025f;
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class ActionInfoPopUp : MonoBehaviour
     private IEnumerator FadeIn()
     {
         var color = new Color(1, 1, 1, 1);
-        for (float alpha = 1f; alpha >= 0; alpha -= 0.005f)
+        for (float alpha = 1f; alpha >= 0; alpha -= _speed)
         {
             color.a = alpha;
             _text.color = color;

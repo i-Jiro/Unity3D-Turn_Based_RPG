@@ -20,8 +20,10 @@ public class Enemy : Battler
     protected virtual void Attack(Hero hero)
     {
         Debug.Log(gameObject.name + " attacked " + hero.gameObject.name);
+        OnDisplayAlert("Attack");
         hero.TakeDamage(CalculateDamage(baseDamageMultiplier));
-        EndTurn();
+        StartCoroutine(DelayEndTurn(1));
+        //EndTurn();
     }
 
     protected virtual Hero PickRandomHero()
@@ -49,5 +51,11 @@ public class Enemy : Battler
         {
             BattleManager.OnActiveTurnChanged -= ToggleTurnTimer;
         }
+    }
+
+    public IEnumerator DelayEndTurn(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        EndTurn();
     }
 }

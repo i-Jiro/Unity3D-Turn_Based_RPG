@@ -41,6 +41,7 @@ public class AlertUIController : MonoBehaviour
 
     public void DisplayMessage(string message)
     {
+        Debug.Log("Alert Called");
         Alertbox.SetActive(true);
         _text.SetText(message);
     }
