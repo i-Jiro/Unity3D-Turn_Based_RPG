@@ -35,11 +35,11 @@ public class BattleUIHandler : MonoBehaviour
     private UISoundHandler _soundHandler;
     private readonly List<Button> _subMenuButtonPool = new List<Button>();
 
-    public delegate void AttackSelectEnemyEvent(Enemy enemy);
-    public static event AttackSelectEnemyEvent OnSelectEnemyAttack;
+    public delegate void AttackSelectEnemyEventHandler(Enemy enemy);
+    public static event AttackSelectEnemyEventHandler OnSelectEnemyAttack;
 
-    public delegate void AbilitySelectEnemyEvent(Enemy enemy, Ability ability);
-    public static event AbilitySelectEnemyEvent OnSelectEnemyAbility;
+    public delegate void AbilitySelectEnemyEventHandler(Enemy enemy, Ability ability);
+    public static event AbilitySelectEnemyEventHandler OnSelectEnemyAbility;
 
     private void Awake()
     {

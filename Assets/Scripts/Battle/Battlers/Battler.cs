@@ -36,6 +36,10 @@ public abstract class Battler : MonoBehaviour
     public delegate void TakeDamageEventHandler(Battler battler, float damage);
     public event TakeDamageEventHandler TookDamage;
 
+    public delegate void DisplayAlertMessage(string message);
+
+    public event DisplayAlertMessage DisplayAlert;
+
     public string Name
     {
         get { return charName; }
@@ -153,11 +157,6 @@ public abstract class Battler : MonoBehaviour
         OnTakeDamage(this,damage);
     }
 
-    protected virtual void OnTakeDamage(Battler battler, float damage)
-    {
-        TookDamage?.Invoke(battler, damage);
-    }
-
     protected virtual void UseMana(float manaUsed)
     {
         currentMana -= manaUsed;
@@ -165,6 +164,7 @@ public abstract class Battler : MonoBehaviour
 
     public virtual void UseItem(Item item, Battler user)
     {
+        OnDisplayAlert(item.Name);
         item.Use(user);
         EndTurn();
     }
@@ -252,5 +252,13 @@ public abstract class Battler : MonoBehaviour
     {
         speedStat.RemoveAllModifierFromSource(source);
     }
+    protected virtual void OnDisplayAlert(string message)
+    {
+        DisplayAlert?.Invoke(message);
+    }
 
+    protected virtual void OnTakeDamage(Battler battler, float damage)
+    {
+        TookDamage?.Invoke(battler, damage);
+    }
 }

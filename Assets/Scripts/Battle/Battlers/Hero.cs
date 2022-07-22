@@ -48,7 +48,7 @@ public class Hero : Battler
 
     public virtual void Attack(Enemy enemy)
     {
-        Debug.Log(gameObject.name + " attacked " + enemy.gameObject.name);
+        OnDisplayAlert("Attack");
         rawDamage = CalculateDamage(baseDamageMultiplier);
         _dealDamageCallback = enemy.TakeDamage;
         audioController.PlayAttackVoice();
@@ -68,6 +68,7 @@ public class Hero : Battler
         attackAbility.Trigger(this, enemyTarget, out rawDamage);
         _dealDamageCallback = enemyTarget.TakeDamage;
         UseMana(ability.ManaCost);
+        OnDisplayAlert(ability.Name);
         audioController.PlaySpecialAttackVoice();
         animationController.PlaySpecialAttack();
     }
@@ -78,6 +79,7 @@ public class Hero : Battler
         SupportAbility buffAbility = ability as SupportAbility;
         buffAbility.Trigger(this);
         UseMana(ability.ManaCost);
+        OnDisplayAlert(ability.Name);
         audioController.PlaySelfBuffVoice();
         animationController.PlayBuff();
     }
@@ -96,6 +98,7 @@ public class Hero : Battler
 
     public virtual void Defend()
     {
+        OnDisplayAlert("Defend");
         audioController.PlayStartGuardVoice();
         isDefending = true;
         AddModifier(defendStanceModifier);
@@ -144,6 +147,7 @@ public class Hero : Battler
 
     public override void UseItem(Item item, Battler user)
     {
+        OnDisplayAlert(item.Name);
         item.Use(user);
         audioController.PlayItemUseVoice();
         animationController.PlayUseItem();
