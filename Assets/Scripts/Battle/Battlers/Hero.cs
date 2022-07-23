@@ -18,6 +18,7 @@ public class Hero : Battler
     
     protected float rawDamage;
     
+    //Events for UI
     public delegate void HealthEventHandler(float health);
     public event HealthEventHandler OnHealthChanged;
     public delegate void TurnTimerEventHandler(float time);
@@ -25,13 +26,17 @@ public class Hero : Battler
     public delegate void ManaEventHandler(float mana);
     public event ManaEventHandler OnManaChanged;
 
+    //Events for Battle Manager
     public delegate void StartTurnEventHandler(Hero hero);
     public event StartTurnEventHandler OnStartTurn;
     public delegate void EndTurnEventHandler();
     public event EndTurnEventHandler OnEndTurn;
 
-    private delegate void DealDamageCallback(float damage);
+    //Events used by Camera Manager
+    public delegate void TargetSelfEventHandler(Battler battler);
+    public event TargetSelfEventHandler OnTargetSelf;
 
+    private delegate void DealDamageCallback(float damage);
     private DealDamageCallback _dealDamageCallback;
 
     protected virtual void Awake()
@@ -82,6 +87,7 @@ public class Hero : Battler
         OnDisplayAlert(ability.Name);
         audioController.PlaySelfBuffVoice();
         animationController.PlayBuff();
+        OnTargetSelf?.Invoke(this);
     }
 
     //For abilities that target party members
@@ -153,6 +159,7 @@ public class Hero : Battler
         item.Use(user);
         audioController.PlayItemUseVoice();
         animationController.PlayUseItem();
+        OnTargetSelf?.Invoke(this);
     }
 
     public override void RecoverHealth(float amountRecovered)
@@ -210,7 +217,7 @@ public class Hero : Battler
         float startingXpos = transform.position.x;
         while(transform.position.x  > startingXpos - _moveOffset)
         {
-            transform.Translate(Vector3.left * _moveSpeed * Time.deltaTime);
+            transform.Translate(Vector3.left * _moveSpeed * Time.deltaTime,Space.World);
             yield return null;
         }
     }
@@ -221,7 +228,7 @@ public class Hero : Battler
         float startingXpos = transform.position.x;
         while (transform.position.x < startingXpos + _moveOffset)
         {
-            transform.Translate(Vector3.right * _moveSpeed * Time.deltaTime);
+            transform.Translate(Vector3.right * _moveSpeed * Time.deltaTime, Space.World);
             yield return null;
         }
     }
