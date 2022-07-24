@@ -24,6 +24,7 @@ public class HeroAudioController : MonoBehaviour
 
     public void PlayAttackVoice()
     {
+        if (_attackVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _attackVoiceClips.Count);
         _audioSource.PlayOneShot(_attackVoiceClips[index]);
@@ -31,6 +32,7 @@ public class HeroAudioController : MonoBehaviour
 
     public void PlaySpecialAttackVoice()
     {
+        if (_specialAttackVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _specialAttackVoiceClips.Count);
         _audioSource.PlayOneShot(_specialAttackVoiceClips[index]);
@@ -38,6 +40,7 @@ public class HeroAudioController : MonoBehaviour
 
     public void PlayHurtVoice()
     {
+        if (_hurtVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _hurtVoiceClips.Count);
         _audioSource.PlayOneShot(_hurtVoiceClips[index]);
@@ -45,6 +48,7 @@ public class HeroAudioController : MonoBehaviour
 
     public void PlayStartTurnVoice()
     {
+        if (_startTurnVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _startTurnVoiceClips.Count);
         _audioSource.PlayOneShot(_startTurnVoiceClips[index]);
@@ -52,12 +56,14 @@ public class HeroAudioController : MonoBehaviour
 
     public void PlayEvadeVoice()
     {
+        if (_evadeVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _evadeVoiceClips.Count);
         _audioSource.PlayOneShot(_evadeVoiceClips[index]);
     }
     public void PlayStartGuardVoice()
     {
+        if (_startTurnVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _startGuardVoiceClips.Count);
         _audioSource.PlayOneShot(_startGuardVoiceClips[index]);
@@ -65,12 +71,14 @@ public class HeroAudioController : MonoBehaviour
 
     public void PlayGuardVoice()
     {
+        if (_guardVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _guardVoiceClips.Count);
         _audioSource.PlayOneShot(_guardVoiceClips[index]);
     }
     public void PlaySelfBuffVoice()
     {
+        if (_selfBuffVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _selfBuffVoiceClips.Count);
         _audioSource.PlayOneShot(_selfBuffVoiceClips[index]);
@@ -78,6 +86,7 @@ public class HeroAudioController : MonoBehaviour
 
     public void PlayItemUseVoice()
     {
+        if (_itemUseVoiceClips.Count == 0) return;
         _audioSource.Stop();
         int index = Random.Range(0, _itemUseVoiceClips.Count);
         _audioSource.PlayOneShot(_itemUseVoiceClips[index]);
