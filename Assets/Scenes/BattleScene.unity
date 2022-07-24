@@ -1051,7 +1051,7 @@ MonoBehaviour:
   m_DeadZoneHeight: 0
   m_SoftZoneWidth: 0.8
   m_SoftZoneHeight: 0.8
-  m_BiasX: 0
+  m_BiasX: -0.09800002
   m_BiasY: 0
   m_CenterOnActivate: 1
 --- !u!1 &474081838
@@ -2926,7 +2926,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 46.9
+    FieldOfView: 55
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -2950,7 +2950,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1157933481}
-  m_LocalRotation: {x: 0.03413149, y: 0.41968986, z: -0.01579538, w: 0.90688807}
+  m_LocalRotation: {x: 0.054672997, y: 0.21955253, z: -0.012324153, w: 0.97398955}
   m_LocalPosition: {x: -3.85, y: 2.5635643, z: -9.179}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3097,9 +3097,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NoiseProfile: {fileID: 11400000, guid: 46965f9cbaf525742a6da4c2172a99cd, type: 2}
+  m_NoiseProfile: {fileID: 11400000, guid: 8608ec81ee27a15488d33f9dad239e91, type: 2}
   m_PivotOffset: {x: 0, y: 0, z: 0}
-  m_AmplitudeGain: 0.25
+  m_AmplitudeGain: 0.49
   m_FrequencyGain: 1
   mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1324854809
@@ -3409,6 +3409,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1365396540}
   - component: {fileID: 1365396541}
+  - component: {fileID: 1365396542}
   m_Layer: 0
   m_Name: Camera Manager
   m_TagString: Untagged
@@ -3424,7 +3425,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1365396539}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.48145726, y: -2.6088188, z: 7.6540246}
+  m_LocalPosition: {x: 15.33, y: -2.6088188, z: 7.6540246}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3445,6 +3446,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _battleSceneCamera: {fileID: 1356667449}
   _focusHeroCamera: {fileID: 1157933482}
+  _targetFocusWeight: 1
+  _otherFocusWeight: 1.5
+--- !u!114 &1365396542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365396539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5eb80d8e62d9d145bb50fb783c0f731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PositionMode: 0
+  m_RotationMode: 0
+  m_UpdateMethod: 2
+  m_Targets: []
 --- !u!1 &1407064968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4463,7 +4482,7 @@ MonoBehaviour:
   m_UpdateMethod: 2
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
-    m_Style: 1
+    m_Style: 2
     m_Time: 0.75
     m_CustomCurve:
       serializedVersion: 2
@@ -5588,6 +5607,22 @@ PrefabInstance:
       propertyPath: maxHealthStat.BaseValue
       value: 1000
       objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: abilitiesData.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: abilitiesData.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: d6c0c83d1467b364b81b0c2e15352193, type: 2}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: abilitiesData.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: d6c0c83d1467b364b81b0c2e15352193, type: 2}
+    - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: abilitiesData.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: d6c0c83d1467b364b81b0c2e15352193, type: 2}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: physicalAttackStat.BaseValue
       value: 100

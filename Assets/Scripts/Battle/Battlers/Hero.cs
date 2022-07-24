@@ -36,6 +36,10 @@ public class Hero : Battler
     public delegate void TargetSelfEventHandler(Battler battler);
     public event TargetSelfEventHandler OnTargetSelf;
 
+    public delegate void TargetGroupEventHandler(Battler battler, Battler other);
+
+    public TargetGroupEventHandler OnTargetOther;
+
     private delegate void DealDamageCallback(float damage);
     private DealDamageCallback _dealDamageCallback;
 
@@ -51,13 +55,14 @@ public class Hero : Battler
         base.TickTurnTimer();
     }
 
-    public virtual void Attack(Enemy enemy)
+    public virtual void Attack(Enemy enemyTarget)
     {
         OnDisplayAlert("Attack");
         rawDamage = CalculateDamage(baseDamageMultiplier);
-        _dealDamageCallback = enemy.TakeDamage;
+        _dealDamageCallback = enemyTarget.TakeDamage;
         audioController.PlayAttackVoice();
         animationController.PlayAttack();
+        OnTargetOther?.Invoke(this, enemyTarget);
     }
 
     //Called on by an animation event at the point of impact to deal damage to enemy.
@@ -76,6 +81,7 @@ public class Hero : Battler
         OnDisplayAlert(ability.Name);
         audioController.PlaySpecialAttackVoice();
         animationController.PlaySpecialAttack();
+        OnTargetOther?.Invoke(this,enemyTarget);
     }
 
     //For abilities that target self
@@ -91,8 +97,9 @@ public class Hero : Battler
     }
 
     //For abilities that target party members
-    public virtual void UseAbility(Hero hero, Ability ability)
+    public virtual void UseAbility(Hero allyTarget, Ability ability)
     {
+        OnTargetOther?.Invoke(this,allyTarget);
         UseMana(ability.ManaCost);
     }
 

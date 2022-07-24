@@ -117,7 +117,7 @@ public abstract class Battler : MonoBehaviour
         float randValue = Random.value;
         if (critChance > CHANCE_CAP) { critChance = CHANCE_CAP; }
         critChance /= CHANCE_CAP;
-        if (randValue < 1 - critChance)
+        if (randValue < critChance)
         {
             finalDamage *= critDamageMultiplier;
         }
