@@ -18,6 +18,8 @@ public class Hero : Battler
     
     protected float rawDamage;
     
+    public float MoveDistance => _moveOffset;
+
     //Events for UI
     public delegate void HealthEventHandler(float health);
     public event HealthEventHandler OnHealthChanged;
@@ -183,12 +185,10 @@ public class Hero : Battler
 
     protected override void StartTurn()
     {
-        StartCoroutine(MoveLeft());
         audioController.PlayStartTurnVoice();
-        animationController.PlayMoveForward();
-        animationController.PlayReady();
         RegenerateMana();
         ResetDefence();
+        StartCoroutine(MoveLeft());
         OnStartTurn?.Invoke(this);
     }
 
@@ -197,9 +197,7 @@ public class Hero : Battler
     {
         TickStatusEffects();
         StartCoroutine(MoveRight());
-        animationController.PlayMoveBackward();
         turnTimer = 0;
-        animationController.PlayIdle();
         OnEndTurn?.Invoke();
     }
 
@@ -218,26 +216,31 @@ public class Hero : Battler
     }
 
     #region IEnumerators
+
     //Moves hero forward to show that it's ready for commands.
     private IEnumerator MoveLeft()
     {
+        animationController.PlayMoveForward();
         float startingXpos = transform.position.x;
         while(transform.position.x  > startingXpos - _moveOffset)
         {
             transform.Translate(Vector3.left * _moveSpeed * Time.deltaTime,Space.World);
             yield return null;
         }
+        animationController.PlayReady();
     }
 
     //Moves here back to original starting position.
     private IEnumerator MoveRight()
     {
+        animationController.PlayMoveBackward();
         float startingXpos = transform.position.x;
         while (transform.position.x < startingXpos + _moveOffset)
         {
             transform.Translate(Vector3.right * _moveSpeed * Time.deltaTime, Space.World);
             yield return null;
         }
+        animationController.PlayIdle();
     }
     #endregion
 
