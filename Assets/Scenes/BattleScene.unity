@@ -4591,7 +4591,7 @@ MonoBehaviour:
     BaseValue: 0
     _value: 0
   speedStat:
-    BaseValue: 45
+    BaseValue: 30
     _value: 0
   criticalStat:
     BaseValue: 0
@@ -4616,15 +4616,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81a26a0dead3b0641b2bc42b463e4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackVoiceClips: []
+  _attackVoiceClips:
+  - {fileID: 8300000, guid: 3a182171e488c264a80b9fde1d3c58d1, type: 3}
   _specialAttackVoiceClips: []
-  _hurtVoiceClips: []
-  _startTurnVoiceClips: []
-  _evadeVoiceClips: []
-  _guardVoiceClips: []
-  _startGuardVoiceClips: []
+  _hurtVoiceClips:
+  - {fileID: 8300000, guid: 4891d13bb2340ac42b6b66ca3f66be4e, type: 3}
+  - {fileID: 8300000, guid: 8c13fb9f5d52df1408db3cddaf126ded, type: 3}
+  - {fileID: 8300000, guid: 1991dce33d0f8044a9da165c85e5361f, type: 3}
+  _startTurnVoiceClips:
+  - {fileID: 8300000, guid: e54b91db69d541640bca1c0cf4f2bfd9, type: 3}
+  - {fileID: 8300000, guid: aea66aac4f7c1df40a54721597acc130, type: 3}
+  - {fileID: 8300000, guid: f0c4c39bfd3816f45ba1da13c04c51af, type: 3}
+  _evadeVoiceClips:
+  - {fileID: 8300000, guid: 9d48398b3d6837a4a9005974aaf28517, type: 3}
+  - {fileID: 8300000, guid: 0583ea329e6337a4384f4442cd77d2c8, type: 3}
+  _guardVoiceClips:
+  - {fileID: 8300000, guid: 5d351c86422a15a4cb1edeb1e8336d23, type: 3}
+  _startGuardVoiceClips:
+  - {fileID: 8300000, guid: 9d48398b3d6837a4a9005974aaf28517, type: 3}
+  - {fileID: 8300000, guid: 0583ea329e6337a4384f4442cd77d2c8, type: 3}
   _selfBuffVoiceClips: []
-  _itemUseVoiceClips: []
+  _itemUseVoiceClips:
+  - {fileID: 8300000, guid: fb4fbdb5eef7a5145ab4d352e9f265d2, type: 3}
 --- !u!114 &1562885496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4649,7 +4662,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -6306,7 +6319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: speedStat.BaseValue
-      value: 50
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6183194970535629201, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
       propertyPath: evasionStat.BaseValue
@@ -6416,5 +6429,9 @@ PrefabInstance:
       propertyPath: CameraTransform
       value: 
       objectReference: {fileID: 1622401479}
+    - target: {fileID: 8519686495224185051, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
+      propertyPath: m_Volume
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cee0d94bda1949e44a630a006283a75d, type: 3}
