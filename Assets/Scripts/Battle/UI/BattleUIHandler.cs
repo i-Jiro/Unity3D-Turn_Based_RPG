@@ -26,7 +26,10 @@ public class BattleUIHandler : MonoBehaviour
     [SerializeField] float _selectorOffsetZ = -1f;
     [SerializeField] GameObject _subMenuButtonPrefab;
     [SerializeField] private int _startingButtonPoolSize;
+    [Tooltip("Offset relative to active Hero's position.")]
+    [SerializeField] private Vector2 _actionMenuOffset;
 
+    private Camera _camera;
     private bool _isSelectingEnemy = false;
     private bool _isSelectingAlly = false;
     private bool _isInSubMenu = false;
@@ -52,6 +55,7 @@ public class BattleUIHandler : MonoBehaviour
             Destroy(gameObject);
         }
         _soundHandler = GetComponent<UISoundHandler>();
+        _camera = Camera.main;
     }
 
     private void Start()
@@ -91,13 +95,19 @@ public class BattleUIHandler : MonoBehaviour
     {
         for (int i = 0; i < startingSize; i++)
         {
-            var button = Instantiate(_subMenuButtonPrefab, _subMenu.transform, true);
-            _subMenuButtonPool.Add(button.GetComponent<Button>());
+            CreateSubMenuButton();
         }
+    }
+
+    private void CreateSubMenuButton()
+    {
+        var button = Instantiate(_subMenuButtonPrefab, _subMenu.transform, false);
+        _subMenuButtonPool.Add(button.GetComponent<Button>());
     }
     
     private void Update()
     {
+        //TODO: Use coroutines for all below.
         MoveEnemySelector();
         //If in the sub menu, pressing escape will take you back to the action menu.
         if(_isInSubMenu && Input.GetKeyDown(KeyCode.Escape))
@@ -123,8 +133,7 @@ public class BattleUIHandler : MonoBehaviour
             int difference = PartyManager.Instance.Inventory.Items.Count - _subMenuButtonPool.Count;
             for (int i = 0; i < difference; i++)
             {
-                var button = Instantiate(_subMenuButtonPrefab, _subMenu.transform, true);
-                _subMenuButtonPool.Add(button.GetComponent<Button>());
+                CreateSubMenuButton();
             }
         }
         
@@ -153,7 +162,7 @@ public class BattleUIHandler : MonoBehaviour
                     text.SetText(itemQuantity);
                 }
             }
-            _subMenuButtonPool[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseUseItem(item, currentHero); _subMenu.gameObject.SetActive(false);ToggleActionMenu(false); });
+            _subMenuButtonPool[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseUseItem(item, currentHero); _subMenu.gameObject.SetActive(false);_actionMenu.gameObject.SetActive(false); });
         }
     }
 
@@ -182,8 +191,7 @@ public class BattleUIHandler : MonoBehaviour
             int difference = PartyManager.Instance.Inventory.Items.Count - currentHero.Abilities.Count;
             for (int i = 0; i < difference; i++)
             {
-                var button = Instantiate(_subMenuButtonPrefab, _subMenu.transform, true);
-                _subMenuButtonPool.Add(button.GetComponent<Button>());
+                CreateSubMenuButton();
             }
         }
 
@@ -226,7 +234,7 @@ public class BattleUIHandler : MonoBehaviour
             }
             else if(ability.GetType() == typeof(SupportAbility))
             {
-                _subMenuButtonPool[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _subMenu.SetActive(false); ToggleActionMenu(false); });
+                _subMenuButtonPool[i].onClick.AddListener(delegate { BattleManager.Instance.ChoseAbility(ability); _subMenu.SetActive(false); _actionMenu.SetActive(false); });
             }
             else
             {
@@ -234,9 +242,13 @@ public class BattleUIHandler : MonoBehaviour
             }
         }
     }
+    
 
     public void ToggleActionMenu(bool value)
     {
+        var currentHero = BattleManager.Instance.GetCurrentHero();
+        Vector3 menuPosition = currentHero.transform.position + new Vector3(-currentHero.MoveDistance,0,0) + (Vector3)_actionMenuOffset;
+        _actionMenu.transform.position = _camera.WorldToScreenPoint(menuPosition);
         _actionMenu.gameObject.SetActive(value);
     }
 
@@ -244,7 +256,7 @@ public class BattleUIHandler : MonoBehaviour
     private void StartSelectEnemy(SelectorType type)
     {
         _selectorType = type;
-        ToggleActionMenu(false);
+        _actionMenu.SetActive(false);
         _selector.gameObject.SetActive(true);
         _isSelectingEnemy = true;
         _selector.transform.position = BattleManager.Instance.enemies[0].gameObject.transform.position + new Vector3(_selectorOffsetX, 0, _selectorOffsetZ);
@@ -305,7 +317,7 @@ public class BattleUIHandler : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.Escape)) //Returns player back to action menu if canceled.
             {
-                ToggleActionMenu(true);
+                _actionMenu.gameObject.SetActive(true);
                 _selector.gameObject.SetActive(false);
                 _isSelectingEnemy = false;
             }
