@@ -8,7 +8,7 @@ A prototype game that takes heavy inspiration from Octopath Traveller and classi
 
 Project served to be a case study and learning experience for developing gameplay systems and mechanics. Systems were developed with game designers in mind to allow for quicker iterations on testing various game components.
 
- Project is free to use under the GNU license.
+ Project is free to use under the GPL license.
  
  Project does NOT include graphic asset used in demo.
  
